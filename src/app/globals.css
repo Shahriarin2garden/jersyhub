@@ -1,26 +1,119 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ------------------------------------------------------------------ *
+ * Design tokens (Tailwind v4 — CSS-first config, no tailwind.config) *
+ * Surface tokens swap on prefers-color-scheme. Brand/status constant. *
+ * ------------------------------------------------------------------ */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  /* Surfaces — light */
+  --color-background: #faf5ff;
+  --color-card: #ffffff;
+  --color-muted: #eceef9;
+  --color-foreground: #4c1d95;
+  --color-text-secondary: #5a5270;
+  --color-text-muted: #8a839c;
+  --color-border: #ddd6fe;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-background: #0f0a1a;
+    --color-card: #1a1330;
+    --color-muted: #241c3a;
+    --color-foreground: #e8e4f0;
+    --color-text-secondary: #b0a8c4;
+    --color-text-muted: #7a7290;
+    --color-border: #3d2d6e;
   }
 }
 
+@theme inline {
+  /* Brand */
+  --color-primary: #7c3aed;
+  --color-primary-light: #ede9fe;
+  --color-primary-dark: #4c1d95;
+  --color-secondary: #a78bfa;
+  --color-accent: #16a34a;
+  --color-accent-dark: #128a3e;
+  --color-accent-light: #dcfce7;
+  --color-destructive: #dc2626;
+  --color-destructive-dark: #b91c1c;
+  --color-destructive-light: #fef2f2;
+
+  /* Surfaces (from CSS vars above) */
+  --color-background: var(--color-background);
+  --color-card: var(--color-card);
+  --color-muted: var(--color-muted);
+  --color-foreground: var(--color-foreground);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+
+  /* Status — background */
+  --color-status-pending-bg: #faeeda;
+  --color-status-pending-text: #854f0b;
+  --color-status-confirmed-bg: #e6f1fb;
+  --color-status-confirmed-text: #185fa5;
+  --color-status-shipped-bg: #ede9fe;
+  --color-status-shipped-text: #7c3aed;
+  --color-status-delivered-bg: #dcfce7;
+  --color-status-delivered-text: #16a34a;
+  --color-status-cancelled-bg: #fef2f2;
+  --color-status-cancelled-text: #dc2626;
+
+  /* Fonts */
+  --font-display: var(--font-barlow-condensed), "Impact", "Arial Narrow", sans-serif;
+  --font-body: var(--font-barlow), system-ui, sans-serif;
+
+  /* Radii */
+  --radius-button: 8px;
+  --radius-card: 12px;
+  --radius-badge: 20px;
+  --radius-modal: 16px;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--color-foreground);
+  text-wrap: balance;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: shimmer 1.5s infinite;
 }

@@ -26,8 +26,11 @@ export function ProductForm({
   productId?: string;
   initial?: {
     name: string;
+    nameBn: string | null;
     description: string | null;
+    descriptionBn: string | null;
     price: number;
+    compareAtPrice: number | null;
     categoryId: string;
     images: string[];
     status: "DRAFT" | "PUBLISHED";
@@ -40,8 +43,13 @@ export function ProductForm({
   const isEdit = !!productId;
 
   const [name, setName] = React.useState(initial?.name ?? "");
+  const [nameBn, setNameBn] = React.useState(initial?.nameBn ?? "");
   const [description, setDescription] = React.useState(initial?.description ?? "");
+  const [descriptionBn, setDescriptionBn] = React.useState(initial?.descriptionBn ?? "");
   const [price, setPrice] = React.useState(initial?.price?.toString() ?? "");
+  const [compareAt, setCompareAt] = React.useState(
+    initial?.compareAtPrice?.toString() ?? "",
+  );
   const [categoryId, setCategoryId] = React.useState(initial?.categoryId ?? "");
   const [images, setImages] = React.useState<string[]>(initial?.images ?? []);
   const [status, setStatus] = React.useState<"DRAFT" | "PUBLISHED">(
@@ -79,8 +87,11 @@ export function ProductForm({
     setSaving(true);
     const payload = {
       name: name.trim(),
+      nameBn: nameBn.trim(),
       description: description.trim(),
+      descriptionBn: descriptionBn.trim(),
       price: priceNum,
+      compareAtPrice: compareAt ? Number(compareAt) : null,
       categoryId,
       images,
       status,
@@ -137,18 +148,32 @@ export function ProductForm({
   return (
     <div className="mx-auto max-w-3xl space-y-4">
       <Card className="space-y-4">
-        <Input
-          label="Product name"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Textarea
-          label="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
         <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label="Product name (English)"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            label="Product name (বাংলা)"
+            value={nameBn}
+            onChange={(e) => setNameBn(e.target.value)}
+          />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Textarea
+            label="Description (English)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <Textarea
+            label="Description (বাংলা)"
+            value={descriptionBn}
+            onChange={(e) => setDescriptionBn(e.target.value)}
+          />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
           <Select
             label="Category"
             required
@@ -167,6 +192,14 @@ export function ProductForm({
             required
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+          />
+          <Input
+            label="Compare-at (৳)"
+            type="number"
+            min={0}
+            value={compareAt}
+            onChange={(e) => setCompareAt(e.target.value)}
+            helper="Original price for discount"
           />
         </div>
       </Card>

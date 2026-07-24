@@ -29,6 +29,7 @@ export const createOrderSchema = z
     items: z.array(orderItemSchema).min(1, "Cart is empty").max(20),
     paymentMethod: z.enum(["BKASH", "COD"]),
     bkashTxnId: z.string().optional(),
+    couponCode: z.string().max(40).optional(),
     notes: z.string().max(500).optional(),
   })
   .refine(
@@ -43,13 +44,34 @@ export const variantInputSchema = z.object({
 
 export const productSchema = z.object({
   name: z.string().min(2).max(120),
+  nameBn: z.string().max(120).optional().or(z.literal("")),
   description: z.string().max(2000).optional().or(z.literal("")),
+  descriptionBn: z.string().max(2000).optional().or(z.literal("")),
   price: z.number().min(0),
+  compareAtPrice: z.number().min(0).nullish(),
   categoryId: z.string().min(1, "Category is required"),
   images: z.array(z.string().url()).max(6).default([]),
   variants: z.array(variantInputSchema).min(1, "Add at least one size"),
   status: z.enum(["DRAFT", "PUBLISHED"]).default("DRAFT"),
   featured: z.boolean().default(false),
+});
+
+export const couponSchema = z.object({
+  code: z.string().min(2).max(40),
+  type: z.enum(["PERCENT", "FIXED"]),
+  value: z.number().min(0),
+  minSubtotal: z.number().min(0).default(0),
+  maxDiscount: z.number().min(0).nullish(),
+  usageLimit: z.number().int().min(1).nullish(),
+  active: z.boolean().default(true),
+  expiresAt: z.string().datetime().nullish(),
+});
+
+export const reviewSchema = z.object({
+  productId: z.string().min(1),
+  rating: z.number().int().min(1).max(5),
+  title: z.string().max(120).optional(),
+  comment: z.string().max(1000).optional(),
 });
 
 export const updateOrderStatusSchema = z.object({

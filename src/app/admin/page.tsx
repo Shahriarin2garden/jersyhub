@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
     setError("");
     setLoading(true);
     const fd = new FormData(e.currentTarget);
-    const res = await signIn("credentials", {
+    const res = await signIn("admin-credentials", {
       email: String(fd.get("email")),
       password: String(fd.get("password")),
       redirect: false,

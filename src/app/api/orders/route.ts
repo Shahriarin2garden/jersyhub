@@ -5,6 +5,8 @@ import { ok, fail, fromZod } from "@/lib/api";
 import { createOrderSchema } from "@/lib/validations";
 import { generateOrderNumber } from "@/lib/utils";
 import { calcDeliveryFee } from "@/lib/constants";
+import { evaluateCoupon } from "@/lib/coupon";
+import { sendEmail, orderPlacedEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -16,7 +18,17 @@ export async function POST(req: NextRequest) {
 
   const parsed = createOrderSchema.safeParse(body);
   if (!parsed.success) return fromZod(parsed.error);
-  const { customer, items, paymentMethod, bkashTxnId, notes } = parsed.data;
+  const { customer, items, paymentMethod, bkashTxnId, couponCode, notes } =
+    parsed.data;
+
+  // Look the coupon up outside the transaction — it is re-checked against the
+  // authoritative subtotal inside, but the network round-trip stays out of the
+  // transaction budget.
+  const couponRow = couponCode?.trim()
+    ? await prisma.coupon.findUnique({
+        where: { code: couponCode.toUpperCase().trim() },
+      })
+    : null;
 
   try {
     const order = await prisma.$transaction(async (tx) => {
@@ -47,6 +59,22 @@ export async function POST(req: NextRequest) {
       });
 
       const deliveryFee = calcDeliveryFee(subtotal);
+
+      // Coupon (re-validated server-side).
+      let discount = 0;
+      let couponId: string | null = null;
+      let appliedCode: string | null = null;
+      if (couponCode?.trim()) {
+        const result = evaluateCoupon(couponRow, subtotal);
+        if (!result.ok) throw new OrderError(result.error);
+        discount = result.discount;
+        couponId = result.coupon.id;
+        appliedCode = result.coupon.code;
+        await tx.coupon.update({
+          where: { id: result.coupon.id },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
 
       // Find or create customer by phone.
       const cust = await tx.customer.upsert({
@@ -89,8 +117,11 @@ export async function POST(req: NextRequest) {
               paymentStatus: "UNPAID",
               bkashTxnId: paymentMethod === "BKASH" ? bkashTxnId : null,
               subtotal,
+              discount,
+              couponId,
+              couponCode: appliedCode,
               deliveryFee,
-              total: subtotal + deliveryFee,
+              total: subtotal - discount + deliveryFee,
               notes: notes || null,
               items: { create: orderItems },
               statusHistory: { create: [{ status: "PENDING", note: "Order placed" }] },
@@ -107,7 +138,27 @@ export async function POST(req: NextRequest) {
         }
       }
       throw new OrderError("Could not generate order number");
-    });
+    },
+    // Neon free tier adds latency per round-trip; the default 5s budget is not
+    // enough for the read + stock updates + order insert on a multi-item cart.
+    { timeout: 20_000, maxWait: 10_000 });
+
+    // Fire order-confirmation email (best-effort).
+    if (customer.email) {
+      const full = await prisma.order.findUnique({
+        where: { orderNumber: order.orderNumber },
+        select: { total: true },
+      });
+      await sendEmail({
+        to: customer.email,
+        subject: `Order ${order.orderNumber} received — JersyHub`,
+        html: orderPlacedEmail(
+          order.orderNumber,
+          customer.name,
+          `৳${(full?.total ?? 0).toLocaleString("en-BD")}`,
+        ),
+      }).catch(() => {});
+    }
 
     return ok({ orderNumber: order.orderNumber }, 201);
   } catch (e) {

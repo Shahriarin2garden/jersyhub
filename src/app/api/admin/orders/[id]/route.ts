@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { ok, fail, fromZod } from "@/lib/api";
 import { requireAdmin } from "@/lib/guard";
 import { updateOrderStatusSchema } from "@/lib/validations";
+import { sendEmail, orderStatusEmail } from "@/lib/email";
 
 export async function GET(
   _req: Request,
@@ -39,7 +40,10 @@ export async function PATCH(
   if (!parsed.success) return fromZod(parsed.error);
   const { status, note } = parsed.data;
 
-  const existing = await prisma.order.findUnique({ where: { id } });
+  const existing = await prisma.order.findUnique({
+    where: { id },
+    include: { customer: { select: { name: true, email: true } } },
+  });
   if (!existing) return fail("Order not found", 404);
 
   const updated = await prisma.order.update({
@@ -52,5 +56,15 @@ export async function PATCH(
     },
     include: { statusHistory: { orderBy: { createdAt: "desc" } } },
   });
+
+  // Notify customer of status change (best-effort).
+  if (existing.customer.email && status !== existing.status) {
+    await sendEmail({
+      to: existing.customer.email,
+      subject: `Order ${existing.orderNumber} — ${status.toLowerCase()}`,
+      html: orderStatusEmail(existing.orderNumber, existing.customer.name, status),
+    }).catch(() => {});
+  }
+
   return ok(updated);
 }

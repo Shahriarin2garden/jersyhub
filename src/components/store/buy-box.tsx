@@ -1,13 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { ShoppingCart } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ShoppingCart, Zap } from "lucide-react";
 import type { Size } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { SizeSelector } from "@/components/ui/size-selector";
 import { QuantityStepper } from "@/components/ui/quantity-stepper";
 import { useCart } from "@/hooks/use-cart";
 import { useToast } from "@/components/ui/toast";
+import { useI18n } from "@/components/i18n-provider";
 import { SIZES } from "@/lib/constants";
 
 type Variant = { id: string; size: Size; stock: number };
@@ -25,6 +27,8 @@ export function BuyBox({
 }) {
   const { addItem } = useCart();
   const toast = useToast();
+  const { t } = useI18n();
+  const router = useRouter();
   const [size, setSize] = React.useState<Size | null>(null);
   const [qty, setQty] = React.useState(1);
 
@@ -39,11 +43,12 @@ export function BuyBox({
   const maxQty = selected?.stock ?? 1;
   // Clamp displayed quantity to available stock for the chosen size.
   const qtyClamped = Math.min(qty, maxQty || 1);
+  const soldOut = product.variants.every((v) => v.stock <= 0);
 
-  const add = () => {
+  const doAdd = (): boolean => {
     if (!size || !selected) {
       toast("Please select a size", "error");
-      return;
+      return false;
     }
     addItem({
       productId: product.id,
@@ -54,7 +59,15 @@ export function BuyBox({
       quantity: qtyClamped,
       image: product.image,
     });
-    toast(`Added ${qtyClamped} × ${product.name} (${size})`, "success");
+    return true;
+  };
+
+  const add = () => {
+    if (doAdd()) toast(`Added ${qtyClamped} × ${product.name} (${size})`, "success");
+  };
+
+  const orderNow = () => {
+    if (doAdd()) router.push("/checkout");
   };
 
   return (
@@ -81,16 +94,28 @@ export function BuyBox({
         <QuantityStepper value={qtyClamped} onChange={setQty} min={1} max={maxQty || 1} />
       </div>
 
-      <Button
-        variant="accent"
-        size="lg"
-        fullWidth
-        onClick={add}
-        disabled={product.variants.every((v) => v.stock <= 0)}
-      >
-        <ShoppingCart className="size-5" />
-        Add to cart
-      </Button>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Button
+          variant="outline"
+          size="lg"
+          fullWidth
+          onClick={add}
+          disabled={soldOut}
+        >
+          <ShoppingCart className="size-5" />
+          {t("common.addToCart")}
+        </Button>
+        <Button
+          variant="accent"
+          size="lg"
+          fullWidth
+          onClick={orderNow}
+          disabled={soldOut}
+        >
+          <Zap className="size-5" />
+          {t("common.orderNow")}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -46,8 +46,11 @@ export async function PATCH(
       where: { id },
       data: {
         ...(d.name !== undefined && { name: d.name }),
+        ...(d.nameBn !== undefined && { nameBn: d.nameBn || null }),
         ...(d.description !== undefined && { description: d.description || null }),
+        ...(d.descriptionBn !== undefined && { descriptionBn: d.descriptionBn || null }),
         ...(d.price !== undefined && { price: d.price }),
+        ...(d.compareAtPrice !== undefined && { compareAtPrice: d.compareAtPrice ?? null }),
         ...(d.categoryId !== undefined && { categoryId: d.categoryId }),
         ...(d.images !== undefined && { images: d.images }),
         ...(d.status !== undefined && { status: d.status }),

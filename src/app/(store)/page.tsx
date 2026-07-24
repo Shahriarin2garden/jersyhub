@@ -4,6 +4,7 @@ import { ShieldCheck, Truck, MessageCircle, ArrowRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/store/product-card";
 import { Button } from "@/components/ui/button";
+import { getT, localized } from "@/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ async function getData() {
 
 export default async function LandingPage() {
   const { featured, categories } = await getData();
+  const { t, locale } = await getT();
 
   return (
     <div>
@@ -34,18 +36,17 @@ export default async function LandingPage() {
       <section className="relative overflow-hidden bg-primary-dark">
         <div className="mx-auto flex max-w-7xl flex-col items-start gap-5 px-4 py-20 sm:py-28">
           <span className="rounded-badge bg-white/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-white/80">
-            Authentic • Cash on delivery
+            {t("home.trust.authentic")} • {t("home.trust.cod")}
           </span>
           <h1 className="max-w-2xl font-display text-4xl font-bold uppercase leading-none text-white sm:text-6xl">
-            Premium jerseys, local prices
+            {t("home.hero.title")}
           </h1>
           <p className="max-w-lg text-lg text-white/80">
-            Football, cricket & basketball kits delivered across Bangladesh. Pay
-            cash on delivery or bKash.
+            {t("home.hero.subtitle")}
           </p>
           <Link href="/shop">
             <Button variant="accent" size="lg">
-              Shop now <ArrowRight className="size-5" />
+              {t("home.hero.cta")} <ArrowRight className="size-5" />
             </Button>
           </Link>
         </div>
@@ -54,12 +55,12 @@ export default async function LandingPage() {
       {/* Featured */}
       <section className="mx-auto max-w-7xl px-4 py-12">
         <h2 className="mb-6 text-2xl font-semibold uppercase text-foreground">
-          Popular jerseys
+          {t("home.popular")}
         </h2>
         {featured.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {featured.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} locale={locale} />
             ))}
           </div>
         ) : (
@@ -70,7 +71,7 @@ export default async function LandingPage() {
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-4 py-12">
         <h2 className="mb-6 text-2xl font-semibold uppercase text-foreground">
-          Browse by sport
+          {t("home.browseBySport")}
         </h2>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {categories.map((c) => (
@@ -91,7 +92,7 @@ export default async function LandingPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div className="relative p-4">
                 <p className="font-display text-xl font-bold uppercase text-white">
-                  {c.name}
+                  {localized(c, "name", "nameBn", locale)}
                 </p>
                 <p className="text-sm text-white/70">
                   {c._count.products} jerseys
@@ -106,9 +107,9 @@ export default async function LandingPage() {
       <section className="border-y border-border bg-card">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 text-center sm:grid-cols-3">
           {[
-            { icon: ShieldCheck, label: "Authentic quality" },
-            { icon: Truck, label: "Cash on delivery" },
-            { icon: MessageCircle, label: "WhatsApp support" },
+            { icon: ShieldCheck, label: t("home.trust.authentic") },
+            { icon: Truck, label: t("home.trust.cod") },
+            { icon: MessageCircle, label: t("home.trust.support") },
           ].map(({ icon: Icon, label }) => (
             <div key={label} className="flex flex-col items-center gap-2">
               <Icon className="size-8 text-primary" />

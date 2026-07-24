@@ -9,6 +9,8 @@ import {
   ShoppingBag,
   Package,
   Users,
+  Ticket,
+  Star,
   Shirt,
   Menu,
   X,
@@ -21,6 +23,8 @@ const NAV = [
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/coupons", label: "Coupons", icon: Ticket },
+  { href: "/admin/reviews", label: "Reviews", icon: Star },
 ];
 
 export function Sidebar() {

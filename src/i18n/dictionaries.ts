@@ -1,0 +1,159 @@
+import type { Locale } from "./config";
+
+/**
+ * Flat dot-namespaced dictionary. Add keys here; both locales must match shape.
+ * Access via `t("nav.shop")`.
+ */
+export const dictionaries = {
+  en: {
+    "nav.shop": "Shop",
+    "nav.cart": "Cart",
+    "nav.wishlist": "Wishlist",
+    "nav.account": "Account",
+    "nav.login": "Login",
+    "nav.logout": "Logout",
+    "nav.search": "Search jerseys…",
+
+    "common.addToCart": "Add to cart",
+    "common.orderNow": "Order now",
+    "common.viewDetails": "View details",
+    "common.price": "Price",
+    "common.size": "Size",
+    "common.quantity": "Quantity",
+    "common.inStock": "in stock",
+    "common.outOfStock": "Out of stock",
+    "common.free": "Free",
+    "common.subtotal": "Subtotal",
+    "common.discount": "Discount",
+    "common.delivery": "Delivery",
+    "common.total": "Total",
+    "common.loading": "Loading…",
+    "common.save": "Save",
+    "common.cancel": "Cancel",
+    "common.apply": "Apply",
+    "common.remove": "Remove",
+    "common.continue": "Continue shopping",
+
+    "home.hero.title": "Premium jerseys, local prices",
+    "home.hero.subtitle": "Football, cricket & basketball kits delivered across Bangladesh.",
+    "home.hero.cta": "Shop now",
+    "home.popular": "Popular jerseys",
+    "home.browseBySport": "Browse by sport",
+    "home.trust.authentic": "Authentic quality",
+    "home.trust.cod": "Cash on delivery",
+    "home.trust.support": "WhatsApp support",
+
+    "shop.title": "Shop jerseys",
+    "shop.filters": "Filters",
+    "shop.category": "Category",
+    "shop.sort.newest": "Newest",
+    "shop.sort.priceAsc": "Price: Low to High",
+    "shop.sort.priceDesc": "Price: High to Low",
+    "shop.empty": "No jerseys found",
+    "shop.clearFilters": "Clear filters",
+
+    "cart.title": "Your cart",
+    "cart.empty": "Your cart is empty",
+    "cart.checkout": "Proceed to checkout",
+
+    "account.title": "My account",
+    "account.orders": "My orders",
+    "account.wishlist": "My wishlist",
+    "account.profile": "Profile",
+    "account.phone": "Phone number",
+    "account.sendCode": "Send code",
+    "account.enterCode": "Enter the code sent to your phone",
+    "account.verify": "Verify",
+    "account.name": "Full name",
+
+    "review.title": "Reviews",
+    "review.write": "Write a review",
+    "review.rating": "Rating",
+    "review.submit": "Submit review",
+    "review.empty": "No reviews yet",
+    "review.verified": "Verified purchase",
+
+    "coupon.placeholder": "Coupon code",
+    "coupon.applied": "Coupon applied",
+    "coupon.invalid": "Invalid or expired coupon",
+  },
+  bn: {
+    "nav.shop": "শপ",
+    "nav.cart": "কার্ট",
+    "nav.wishlist": "উইশলিস্ট",
+    "nav.account": "অ্যাকাউন্ট",
+    "nav.login": "লগইন",
+    "nav.logout": "লগআউট",
+    "nav.search": "জার্সি খুঁজুন…",
+
+    "common.addToCart": "কার্টে যোগ করুন",
+    "common.orderNow": "এখনই অর্ডার করুন",
+    "common.viewDetails": "বিস্তারিত দেখুন",
+    "common.price": "মূল্য",
+    "common.size": "সাইজ",
+    "common.quantity": "পরিমাণ",
+    "common.inStock": "স্টকে আছে",
+    "common.outOfStock": "স্টকে নেই",
+    "common.free": "ফ্রি",
+    "common.subtotal": "সাবটোটাল",
+    "common.discount": "ছাড়",
+    "common.delivery": "ডেলিভারি",
+    "common.total": "মোট",
+    "common.loading": "লোড হচ্ছে…",
+    "common.save": "সেভ করুন",
+    "common.cancel": "বাতিল",
+    "common.apply": "প্রয়োগ করুন",
+    "common.remove": "সরান",
+    "common.continue": "শপিং চালিয়ে যান",
+
+    "home.hero.title": "প্রিমিয়াম জার্সি, দেশীয় দামে",
+    "home.hero.subtitle": "ফুটবল, ক্রিকেট ও বাস্কেটবল জার্সি সারা বাংলাদেশে ডেলিভারি।",
+    "home.hero.cta": "এখনই কিনুন",
+    "home.popular": "জনপ্রিয় জার্সি",
+    "home.browseBySport": "খেলা অনুযায়ী দেখুন",
+    "home.trust.authentic": "অরিজিনাল কোয়ালিটি",
+    "home.trust.cod": "ক্যাশ অন ডেলিভারি",
+    "home.trust.support": "হোয়াটসঅ্যাপ সাপোর্ট",
+
+    "shop.title": "জার্সি শপ",
+    "shop.filters": "ফিল্টার",
+    "shop.category": "ক্যাটাগরি",
+    "shop.sort.newest": "নতুন",
+    "shop.sort.priceAsc": "দাম: কম থেকে বেশি",
+    "shop.sort.priceDesc": "দাম: বেশি থেকে কম",
+    "shop.empty": "কোনো জার্সি পাওয়া যায়নি",
+    "shop.clearFilters": "ফিল্টার মুছুন",
+
+    "cart.title": "আপনার কার্ট",
+    "cart.empty": "আপনার কার্ট খালি",
+    "cart.checkout": "চেকআউটে যান",
+
+    "account.title": "আমার অ্যাকাউন্ট",
+    "account.orders": "আমার অর্ডার",
+    "account.wishlist": "আমার উইশলিস্ট",
+    "account.profile": "প্রোফাইল",
+    "account.phone": "ফোন নম্বর",
+    "account.sendCode": "কোড পাঠান",
+    "account.enterCode": "আপনার ফোনে পাঠানো কোড লিখুন",
+    "account.verify": "যাচাই করুন",
+    "account.name": "পুরো নাম",
+
+    "review.title": "রিভিউ",
+    "review.write": "রিভিউ লিখুন",
+    "review.rating": "রেটিং",
+    "review.submit": "রিভিউ জমা দিন",
+    "review.empty": "এখনো কোনো রিভিউ নেই",
+    "review.verified": "যাচাইকৃত ক্রয়",
+
+    "coupon.placeholder": "কুপন কোড",
+    "coupon.applied": "কুপন প্রয়োগ হয়েছে",
+    "coupon.invalid": "কুপনটি সঠিক নয় বা মেয়াদ শেষ",
+  },
+} as const;
+
+export type TranslationKey = keyof (typeof dictionaries)["en"];
+export type Dictionary = Record<TranslationKey, string>;
+
+export function getDictionary(locale: Locale): Dictionary {
+  return dictionaries[locale];
+}

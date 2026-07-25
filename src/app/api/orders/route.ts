@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
       });
       await sendEmail({
         to: customer.email,
-        subject: `Order ${order.orderNumber} received — JersyHub`,
+        subject: `Order ${order.orderNumber} received — NexVive`,
         html: orderPlacedEmail(
           order.orderNumber,
           customer.name,

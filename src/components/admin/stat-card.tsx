@@ -15,7 +15,7 @@ export function StatCard({
   const tones = {
     default: "bg-primary-light text-primary",
     amber: "bg-status-pending-bg text-status-pending-text",
-    green: "bg-accent-light text-accent",
+    green: "bg-accent-light text-primary-dark",
   };
   return (
     <div className="rounded-card border border-border bg-card p-4">

@@ -27,7 +27,7 @@ export async function requestOtp(phone: string): Promise<{ ok: boolean; error?: 
     data: { phone, codeHash, expiresAt: new Date(Date.now() + OTP_TTL_MIN * 60 * 1000) },
   });
 
-  await sendSms(phone, `Your JersyHub verification code is ${code}. Valid for ${OTP_TTL_MIN} minutes.`);
+  await sendSms(phone, `Your NexVive verification code is ${code}. Valid for ${OTP_TTL_MIN} minutes.`);
 
   // In dev (no SMS gateway) expose the code so login is testable.
   const devCode = process.env.SMS_API_KEY ? undefined : code;

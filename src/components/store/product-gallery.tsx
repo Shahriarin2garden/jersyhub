@@ -35,9 +35,12 @@ export function ProductGallery({
               key={img + i}
               onClick={() => setActive(i)}
               aria-label={`View image ${i + 1}`}
+              aria-pressed={i === active}
               className={cn(
-                "relative aspect-4/5 w-16 shrink-0 overflow-hidden rounded-button border-2",
-                i === active ? "border-primary" : "border-transparent",
+                "relative aspect-4/5 w-16 shrink-0 overflow-hidden rounded-button border-2 transition-colors",
+                i === active
+                  ? "border-primary"
+                  : "border-transparent hover:border-border",
               )}
             >
               <Image src={img} alt="" fill sizes="64px" className="object-cover" />

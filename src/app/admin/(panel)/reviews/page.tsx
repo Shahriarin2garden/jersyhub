@@ -66,7 +66,7 @@ export default async function ReviewsPage({ searchParams }: { searchParams: SP }
                 </div>
                 <Badge
                   className={cn(
-                    r.status === "APPROVED" && "bg-accent-light text-accent",
+                    r.status === "APPROVED" && "bg-accent-light text-primary-dark",
                     r.status === "PENDING" && "bg-status-pending-bg text-status-pending-text",
                     r.status === "REJECTED" && "bg-destructive-light text-destructive",
                   )}

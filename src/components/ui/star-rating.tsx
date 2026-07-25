@@ -23,7 +23,7 @@ export function StarRating({
             style={{ width: size, height: size }}
             className={cn(
               i <= Math.round(value)
-                ? "fill-amber-400 text-amber-400"
+                ? "fill-rating text-rating"
                 : "fill-muted text-border",
             )}
           />
@@ -65,7 +65,7 @@ export function StarInput({
             className={cn(
               "size-7",
               i <= (hover || value)
-                ? "fill-amber-400 text-amber-400"
+                ? "fill-rating text-rating"
                 : "fill-muted text-border",
             )}
           />

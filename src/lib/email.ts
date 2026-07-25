@@ -2,7 +2,7 @@
  * Email via Resend. Falls back to console logging in dev (no RESEND_API_KEY).
  * Free tier: https://resend.com
  */
-const FROM = process.env.EMAIL_FROM ?? "JersyHub <onboarding@resend.dev>";
+const FROM = process.env.EMAIL_FROM ?? "NexVive <onboarding@resend.dev>";
 
 export async function sendEmail(opts: {
   to: string;
@@ -35,11 +35,11 @@ export async function sendEmail(opts: {
 }
 
 const brandWrap = (body: string) => `
-  <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#4c1d95">
-    <h1 style="font-size:22px;color:#7c3aed;margin:0 0 12px">JersyHub</h1>
+  <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#171512">
+    <h1 style="font-size:22px;color:#171512;letter-spacing:3px;margin:0 0 12px">NEX<span style="color:#c79a2e">VIVE</span></h1>
     ${body}
-    <hr style="border:none;border-top:1px solid #ddd6fe;margin:20px 0" />
-    <p style="font-size:12px;color:#8a839c">JersyHub — Premium jerseys, local prices.</p>
+    <hr style="border:none;border-top:1px solid #e7e0d0;margin:20px 0" />
+    <p style="font-size:12px;color:#8a8275">NexVive — Style that defines you.</p>
   </div>`;
 
 export function orderPlacedEmail(orderNumber: string, name: string, total: string) {

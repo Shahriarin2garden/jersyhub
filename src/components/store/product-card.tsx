@@ -33,7 +33,7 @@ export function ProductCard({
     : 0;
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-card border border-border bg-card transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+    <div className="group relative flex flex-col overflow-hidden rounded-card border border-border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg">
       <WishlistButton productId={product.id} className="absolute right-2 top-2 z-10" />
       {hasDiscount && (
         <span className="absolute left-2 top-2 z-10 rounded-badge bg-destructive px-2 py-0.5 text-xs font-bold text-white">
@@ -54,11 +54,11 @@ export function ProductCard({
         </div>
         <div className="flex flex-1 flex-col gap-1 p-3">
           {product.category && (
-            <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-text-muted">
               {product.category.name}
             </span>
           )}
-          <h3 className="line-clamp-2 text-base font-semibold text-foreground">
+          <h3 className="line-clamp-2 text-base font-medium text-foreground transition-colors group-hover:text-primary">
             {name}
           </h3>
           <div className="mt-auto flex items-baseline gap-2 pt-1">

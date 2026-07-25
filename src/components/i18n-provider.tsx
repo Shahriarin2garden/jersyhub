@@ -57,7 +57,7 @@ export function LocaleToggle({ className }: { className?: string }) {
     <button
       onClick={() => setLocale(locale === "bn" ? "en" : "bn")}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-button px-2.5 py-1.5 text-sm font-medium text-text-secondary hover:bg-muted",
+        "inline-flex min-h-9 items-center gap-1.5 rounded-button px-2.5 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:bg-muted hover:text-foreground",
         className,
       )}
       aria-label="Switch language"

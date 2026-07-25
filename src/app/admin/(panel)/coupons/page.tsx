@@ -50,7 +50,7 @@ export default async function CouponsPage() {
                   <Badge
                     className={
                       c.active
-                        ? "bg-accent-light text-accent"
+                        ? "bg-accent-light text-primary-dark"
                         : "bg-muted text-text-muted"
                     }
                   >

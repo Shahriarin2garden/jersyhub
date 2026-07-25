@@ -79,7 +79,7 @@ export default async function AdminOrderDetail({
                 <dd className="tabular">{formatPrice(order.subtotal)}</dd>
               </div>
               {order.discount > 0 && (
-                <div className="flex justify-between text-accent">
+                <div className="flex justify-between text-foreground">
                   <dt>Discount{order.couponCode ? ` (${order.couponCode})` : ""}</dt>
                   <dd className="tabular">−{formatPrice(order.discount)}</dd>
                 </div>

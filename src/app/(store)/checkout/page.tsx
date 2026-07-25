@@ -287,7 +287,7 @@ export default function CheckoutPage() {
               <dd className="tabular text-foreground">{formatPrice(subtotal)}</dd>
             </div>
             {coupon && (
-              <div className="flex justify-between text-accent">
+              <div className="flex justify-between text-foreground">
                 <dt>Discount ({coupon.code})</dt>
                 <dd className="tabular">−{formatPrice(discount)}</dd>
               </div>

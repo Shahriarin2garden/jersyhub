@@ -3,9 +3,10 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShoppingCart, Shirt, Heart, User, Search } from "lucide-react";
+import { ShoppingCart, Heart, User, Search } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useI18n, LocaleToggle } from "@/components/i18n-provider";
+import { BrandLogo } from "@/components/brand-logo";
 
 type Category = { slug: string; name: string; nameBn: string | null };
 
@@ -35,12 +36,7 @@ export function Navbar({
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
-        <Link href="/" className="flex shrink-0 items-center gap-2">
-          <Shirt className="size-6 text-primary" />
-          <span className="font-display text-2xl font-bold uppercase tracking-tight text-foreground">
-            JersyHub
-          </span>
-        </Link>
+        <BrandLogo size={48} priority />
 
         {/* Search (desktop) */}
         <form onSubmit={submitSearch} className="relative hidden flex-1 md:block">
@@ -85,7 +81,7 @@ export function Navbar({
           >
             <ShoppingCart className="size-5 text-foreground" />
             {hydrated && count > 0 && (
-              <span className="tabular absolute -right-0.5 -top-0.5 flex min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-white">
+              <span className="tabular absolute -right-0.5 -top-0.5 flex min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-primary-dark">
                 {count}
               </span>
             )}

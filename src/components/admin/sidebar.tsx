@@ -11,12 +11,12 @@ import {
   Users,
   Ticket,
   Star,
-  Shirt,
   Menu,
   X,
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/brand-logo";
 
 const NAV = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -58,9 +58,9 @@ export function Sidebar() {
   const inner = (
     <div className="flex h-full flex-col p-4">
       <Link href="/admin/dashboard" className="mb-6 flex items-center gap-2 px-1">
-        <Shirt className="size-6 text-primary" />
-        <span className="font-display text-xl font-bold uppercase text-foreground">
-          JersyHub
+        <BrandLogo size={40} href={null} />
+        <span className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+          Admin
         </span>
       </Link>
       {nav}
@@ -80,8 +80,9 @@ export function Sidebar() {
         <button onClick={() => setOpen(true)} aria-label="Open menu">
           <Menu className="size-6 text-foreground" />
         </button>
-        <span className="font-display text-lg font-bold uppercase text-foreground">
-          JersyHub Admin
+        <BrandLogo size={32} href={null} />
+        <span className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+          Admin
         </span>
       </div>
 

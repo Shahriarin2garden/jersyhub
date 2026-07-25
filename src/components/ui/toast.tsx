@@ -17,7 +17,7 @@ const icons = {
   info: Info,
 };
 const styles = {
-  success: "border-accent/40 text-accent",
+  success: "border-success/40 text-success",
   error: "border-destructive/40 text-destructive",
   info: "border-primary/40 text-primary",
 };

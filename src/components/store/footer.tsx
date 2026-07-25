@@ -1,48 +1,50 @@
 import Link from "next/link";
 import { Phone, MapPin, MessageCircle } from "lucide-react";
 import { BUSINESS, whatsappLink } from "@/lib/constants";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function Footer() {
   return (
     <footer className="mt-16 bg-primary-dark text-white/90">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:grid-cols-3">
         <div>
-          <h3 className="font-display text-2xl font-bold uppercase text-white">
-            {BUSINESS.name}
-          </h3>
-          <p className="mt-2 text-sm text-white/70">
-            Premium jerseys at local prices. Authentic quality, cash on delivery.
+          <BrandLogo size={104} href={null} className="shadow-none" />
+          <p className="mt-4 max-w-xs text-sm text-white/70">
+            Authentic quality, cash on delivery across Bangladesh.
           </p>
         </div>
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2.5 text-sm text-white/75">
           <p className="flex items-center gap-2">
-            <MapPin className="size-4" /> {BUSINESS.address}
+            <MapPin className="size-4 text-accent" /> {BUSINESS.address}
           </p>
           <p className="flex items-center gap-2">
-            <Phone className="size-4" /> {BUSINESS.phone}
+            <Phone className="size-4 text-accent" /> {BUSINESS.phone}
           </p>
           <a
-            href={whatsappLink("Hi JersyHub, I have a question.")}
+            href={whatsappLink("Hi NexVive, I have a question.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 hover:text-white"
+            className="flex items-center gap-2 transition-colors hover:text-white"
           >
-            <MessageCircle className="size-4" /> WhatsApp us
+            <MessageCircle className="size-4 text-accent" /> WhatsApp us
           </a>
         </div>
-        <div className="space-y-2 text-sm">
-          <Link href="/shop" className="block hover:text-white">
-            Shop all jerseys
+        <div className="space-y-2.5 text-sm text-white/75">
+          <Link href="/shop" className="block transition-colors hover:text-white">
+            Shop all
           </Link>
-          <Link href="/cart" className="block hover:text-white">
+          <Link href="/cart" className="block transition-colors hover:text-white">
             Your cart
           </Link>
-          <Link href="/admin" className="block text-white/50 hover:text-white">
+          <Link href="/account" className="block transition-colors hover:text-white">
+            My account
+          </Link>
+          <Link href="/admin" className="block text-white/40 transition-colors hover:text-white">
             Admin
           </Link>
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-white/50">
+      <div className="border-t border-white/10 py-4 text-center text-xs uppercase tracking-widest text-white/50">
         © {new Date().getFullYear()} {BUSINESS.name}. All rights reserved.
       </div>
     </footer>

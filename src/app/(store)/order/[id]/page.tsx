@@ -70,7 +70,7 @@ export default async function OrderPage({
               <dd className="tabular">{formatPrice(order.subtotal)}</dd>
             </div>
             {order.discount > 0 && (
-              <div className="flex justify-between text-accent">
+              <div className="flex justify-between text-foreground">
                 <dt>Discount{order.couponCode ? ` (${order.couponCode})` : ""}</dt>
                 <dd className="tabular">−{formatPrice(order.discount)}</dd>
               </div>
@@ -103,7 +103,7 @@ export default async function OrderPage({
           href={whatsappLink(`Hi, I'm tracking order ${order.orderNumber}.`)}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 rounded-button bg-accent px-4 py-3 font-medium text-white hover:bg-accent-dark"
+          className="flex items-center justify-center gap-2 rounded-button bg-accent px-4 py-3 font-medium text-primary-dark hover:bg-accent-dark"
         >
           <MessageCircle className="size-5" />
           Questions? Contact us on WhatsApp

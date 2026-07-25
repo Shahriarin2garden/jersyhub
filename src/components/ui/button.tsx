@@ -13,10 +13,10 @@ type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary: "bg-primary text-white hover:bg-primary-dark",
-  secondary: "bg-primary-light text-primary hover:bg-secondary hover:text-white",
+  secondary: "bg-primary-light text-primary hover:bg-secondary hover:text-primary-dark",
   outline: "border border-primary text-primary hover:bg-primary-light",
   ghost: "text-text-secondary hover:bg-muted",
-  accent: "bg-accent text-white hover:bg-accent-dark",
+  accent: "bg-accent text-primary-dark hover:bg-accent-dark",
   destructive: "bg-destructive text-white hover:bg-destructive-dark",
 };
 
@@ -43,9 +43,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-button font-medium transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        "disabled:opacity-50 disabled:cursor-not-allowed",
+        "inline-flex items-center justify-center gap-2 rounded-button font-medium tracking-wide transition duration-150 active:scale-[0.98]",
+        "disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
         variants[variant],
         sizes[size],
         fullWidth && "w-full",

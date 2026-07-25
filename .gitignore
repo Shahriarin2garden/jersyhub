@@ -45,3 +45,7 @@ prisma/migrations/migration_lock.toml
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python bytecode (skill scripts)
+__pycache__/
+*.pyc

@@ -23,7 +23,7 @@ export function QuantityStepper({
         onClick={dec}
         disabled={value <= min}
         aria-label="Decrease quantity"
-        className="flex size-10 items-center justify-center text-foreground disabled:opacity-40"
+        className="flex size-11 items-center justify-center text-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
       >
         <Minus className="size-4" />
       </button>
@@ -35,7 +35,7 @@ export function QuantityStepper({
         onClick={inc}
         disabled={value >= max}
         aria-label="Increase quantity"
-        className="flex size-10 items-center justify-center text-foreground disabled:opacity-40"
+        className="flex size-11 items-center justify-center text-foreground transition-colors hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
       >
         <Plus className="size-4" />
       </button>

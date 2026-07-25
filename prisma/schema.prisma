@@ -38,9 +38,21 @@ enum PaymentStatus {
   PAID
 }
 
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
 model Category {
   id           String    @id @default(cuid())
   name         String
+  nameBn       String?
   slug         String    @unique
   image        String?
   displayOrder Int       @default(0)
@@ -50,21 +62,26 @@ model Category {
 }
 
 model Product {
-  id          String         @id @default(cuid())
-  name        String
-  slug        String         @unique
-  description String?
-  price       Float
-  categoryId  String
-  images      String[]
-  status      ProductStatus  @default(DRAFT)
-  featured    Boolean        @default(false)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id             String        @id @default(cuid())
+  name           String
+  nameBn         String?
+  slug           String        @unique
+  description    String?
+  descriptionBn  String?
+  price          Float
+  compareAtPrice Float?
+  categoryId     String
+  images         String[]
+  status         ProductStatus @default(DRAFT)
+  featured       Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   category    Category         @relation(fields: [categoryId], references: [id])
   variants    ProductVariant[]
   orderItems  OrderItem[]
+  reviews     Review[]
+  wishlisted  WishlistItem[]
 
   @@index([categoryId])
   @@index([status])
@@ -83,16 +100,19 @@ model ProductVariant {
 }
 
 model Customer {
-  id        String   @id @default(cuid())
-  name      String
-  phone     String   @unique
-  email     String?
-  division  String
-  district  String
-  address   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  orders    Order[]
+  id            String         @id @default(cuid())
+  name          String
+  phone         String         @unique
+  email         String?
+  division      String?
+  district      String?
+  address       String?
+  phoneVerified Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  orders        Order[]
+  wishlist      WishlistItem[]
+  reviews       Review[]
 
   @@index([phone])
 }
@@ -106,6 +126,9 @@ model Order {
   paymentStatus PaymentStatus @default(UNPAID)
   bkashTxnId    String?
   subtotal      Float
+  discount      Float         @default(0)
+  couponId      String?
+  couponCode    String?
   deliveryFee   Float         @default(0)
   total         Float
   notes         String?
@@ -113,6 +136,7 @@ model Order {
   updatedAt     DateTime      @updatedAt
 
   customer      Customer             @relation(fields: [customerId], references: [id])
+  coupon        Coupon?              @relation(fields: [couponId], references: [id])
   items         OrderItem[]
   statusHistory OrderStatusHistory[]
 
@@ -155,4 +179,63 @@ model Admin {
   passwordHash String
   name         String
   createdAt    DateTime @default(now())
+}
+
+model Otp {
+  id        String   @id @default(cuid())
+  phone     String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  customerId String
+  productId  String
+  createdAt  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, productId])
+  @@index([customerId])
+}
+
+model Review {
+  id         String       @id @default(cuid())
+  productId  String
+  customerId String
+  rating     Int
+  title      String?
+  comment    String?
+  status     ReviewStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, customerId])
+  @@index([productId])
+  @@index([status])
+}
+
+model Coupon {
+  id          String       @id @default(cuid())
+  code        String       @unique
+  type        DiscountType
+  value       Float
+  minSubtotal Float        @default(0)
+  maxDiscount Float?
+  usageLimit  Int?
+  usedCount   Int          @default(0)
+  active      Boolean      @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  orders      Order[]
 }

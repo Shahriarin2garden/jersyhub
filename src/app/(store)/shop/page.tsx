@@ -12,6 +12,7 @@ import {
   buildProductOrderBy,
   type ProductFilters,
 } from "@/lib/product-query";
+import { getT } from "@/i18n/server";
 
 export const metadata = { title: "Shop" };
 export const dynamic = "force-dynamic";
@@ -53,6 +54,7 @@ export default async function ShopPage({ searchParams }: { searchParams: SP }) {
     }),
   ]);
 
+  const { t, locale } = await getT();
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const paramBag = Object.fromEntries(
     Object.entries(filters).filter(([, v]) => v),
@@ -62,7 +64,7 @@ export default async function ShopPage({ searchParams }: { searchParams: SP }) {
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold uppercase text-foreground">
-          Shop jerseys
+          {t("shop.title")}
         </h1>
         <SortSelect />
       </div>
@@ -75,7 +77,7 @@ export default async function ShopPage({ searchParams }: { searchParams: SP }) {
             <>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 {products.map((p) => (
-                  <ProductCard key={p.id} product={p} />
+                  <ProductCard key={p.id} product={p} locale={locale} />
                 ))}
               </div>
               <div className="mt-8">

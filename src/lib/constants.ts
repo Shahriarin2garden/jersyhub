@@ -27,7 +27,7 @@ export function calcDeliveryFee(subtotal: number): number {
 export const BKASH_NUMBER = "01712-345678";
 export const WHATSAPP_NUMBER = "8801712345678";
 export const BUSINESS = {
-  name: "JersyHub",
+  name: "NexVive",
   address: "Shop 12, New Market, Dhaka 1205",
   phone: "01712-345678",
   whatsapp: WHATSAPP_NUMBER,

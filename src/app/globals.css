@@ -6,37 +6,40 @@
  * ------------------------------------------------------------------ */
 
 :root {
-  /* Surfaces — light */
-  --color-background: #faf5ff;
+  /* Surfaces — light. Warm cream canvas so black + gold read as luxury,
+     not stark UI chrome. */
+  --color-background: #faf8f3;
   --color-card: #ffffff;
-  --color-muted: #eceef9;
-  --color-foreground: #4c1d95;
-  --color-text-secondary: #5a5270;
-  --color-text-muted: #8a839c;
-  --color-border: #ddd6fe;
+  --color-muted: #f0ebe0;
+  --color-foreground: #171512;
+  --color-text-secondary: #4a453c;
+  --color-text-muted: #8a8275;
+  --color-border: #e7e0d0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #0f0a1a;
-    --color-card: #1a1330;
-    --color-muted: #241c3a;
-    --color-foreground: #e8e4f0;
-    --color-text-secondary: #b0a8c4;
-    --color-text-muted: #7a7290;
-    --color-border: #3d2d6e;
+    --color-background: #0c0b0a;
+    --color-card: #1a1712;
+    --color-muted: #23201a;
+    --color-foreground: #f5efe0;
+    --color-text-secondary: #c9c2b2;
+    --color-text-muted: #8a8375;
+    --color-border: #332e24;
   }
 }
 
 @theme inline {
-  /* Brand */
-  --color-primary: #7c3aed;
-  --color-primary-light: #ede9fe;
-  --color-primary-dark: #4c1d95;
-  --color-secondary: #a78bfa;
-  --color-accent: #16a34a;
-  --color-accent-dark: #128a3e;
-  --color-accent-light: #dcfce7;
+  /* Brand — NexVive: black is the canvas, gold is the accent.
+     Gold has poor contrast as text on white, so gold is used for fills and
+     large marks; black (`primary`) carries buttons, links and headings. */
+  --color-primary: #171512;
+  --color-primary-light: #f3ecdd;
+  --color-primary-dark: #0c0b0a;
+  --color-secondary: #c9a24b;
+  --color-accent: #c79a2e;
+  --color-accent-dark: #a87f1e;
+  --color-accent-light: #f7edd4;
   --color-destructive: #dc2626;
   --color-destructive-dark: #b91c1c;
   --color-destructive-light: #fef2f2;
@@ -55,16 +58,31 @@
   --color-status-pending-text: #854f0b;
   --color-status-confirmed-bg: #e6f1fb;
   --color-status-confirmed-text: #185fa5;
-  --color-status-shipped-bg: #ede9fe;
-  --color-status-shipped-text: #7c3aed;
+  --color-status-shipped-bg: #f7edd4;
+  --color-status-shipped-text: #8a6d12;
   --color-status-delivered-bg: #dcfce7;
   --color-status-delivered-text: #16a34a;
   --color-status-cancelled-bg: #fef2f2;
   --color-status-cancelled-text: #dc2626;
 
-  /* Fonts */
-  --font-display: var(--font-barlow-condensed), "Impact", "Arial Narrow", sans-serif;
-  --font-body: var(--font-barlow), system-ui, sans-serif;
+  /* Ratings — stars share the brand gold family (a gold brand can't also
+     reserve gold for stars alone). Slightly brighter than `accent` so a filled
+     star still reads against a gold button. */
+  --color-rating: #e0a82e;
+
+  /* Success — green survives only as a positive/confirmation signal (toast
+     success, delivered). Never a brand/decorative colour. */
+  --color-success: #16a34a;
+  --color-success-light: #dcfce7;
+
+  /* Fonts. Cormorant (serif) sets the luxury-fashion display voice; Montserrat
+     carries body. Bangla is the default locale and neither Latin family has
+     Bengali glyphs, so Noto Sans Bengali sits in both stacks — Latin runs render
+     in the brand face, Bengali runs in Noto, within the same line. */
+  --font-display: var(--font-cormorant), var(--font-noto-bengali), Georgia,
+    "Times New Roman", serif;
+  --font-body: var(--font-montserrat), var(--font-noto-bengali), system-ui,
+    sans-serif;
 
   /* Radii */
   --radius-button: 8px;
@@ -94,12 +112,69 @@ h1, h2, h3, h4 {
   font-variant-numeric: tabular-nums;
 }
 
+/* ------------------------------------------------------------------ *
+ * Interaction baseline. Tailwind v4 ships NO default cursor on <button>,
+ * and custom (non-<Button>) controls easily forget a focus ring. These two
+ * rules guarantee correct cursor + a visible keyboard focus on every
+ * interactive element site-wide, so no individual control can regress.
+ * ------------------------------------------------------------------ */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label[for],
+summary {
+  cursor: pointer;
+}
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* Focus ring that survives every surface. A surface-coloured inner gap plus a
+   gold outer ring stays visible on light cards, on the gold accent buttons
+   themselves, and on the black slabs. The transparent `outline` is the
+   forced-colors (Windows high-contrast) fallback, where box-shadow is dropped.
+   Inputs keep their own field ring, so they're excluded here. */
+:where(a[href], button, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 2px var(--color-background),
+    0 0 0 4px var(--color-accent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Scroll reveal. Ends at the final state, so when prefers-reduced-motion
+ * collapses the duration the content is simply visible — never stuck at
+ * opacity 0. Browsers without animation-timeline run it once on load.
+ * ------------------------------------------------------------------ */
+@keyframes reveal-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.reveal {
+  animation: reveal-rise 500ms ease-out both;
+}
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation-timeline: view();
+    animation-range: entry 0% cover 22%;
+    animation-fill-mode: both;
+  }
+}
+
+.reveal-delay-1 { animation-delay: 60ms; }
+.reveal-delay-2 { animation-delay: 120ms; }
+.reveal-delay-3 { animation-delay: 180ms; }
+.reveal-delay-4 { animation-delay: 240ms; }
 
 /* Skeleton shimmer */
 @keyframes shimmer {

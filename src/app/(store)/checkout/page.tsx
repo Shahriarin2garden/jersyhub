@@ -15,7 +15,7 @@ import { DIVISIONS, DIVISION_NAMES, BKASH_NUMBER } from "@/lib/constants";
 import { customerSchema } from "@/lib/validations";
 
 export default function CheckoutPage() {
-  const { items, subtotal, deliveryFee, total, clear, hydrated } = useCart();
+  const { items, subtotal, deliveryFee, clear, hydrated } = useCart();
   const router = useRouter();
   const toast = useToast();
 
@@ -24,7 +24,38 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
+  // Coupon
+  const [couponInput, setCouponInput] = React.useState("");
+  const [coupon, setCoupon] = React.useState<{ code: string; discount: number } | null>(null);
+  const [applyingCoupon, setApplyingCoupon] = React.useState(false);
+
   const districts = division ? DIVISIONS[division] ?? [] : [];
+  const discount = coupon?.discount ?? 0;
+  const grandTotal = Math.max(0, subtotal - discount) + deliveryFee;
+
+  async function applyCoupon() {
+    if (!couponInput.trim() || applyingCoupon) return;
+    setApplyingCoupon(true);
+    try {
+      const res = await fetch("/api/coupon/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponInput.trim(), subtotal }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setCoupon(null);
+        toast(json.error ?? "Invalid coupon", "error");
+        return;
+      }
+      setCoupon({ code: json.data.code, discount: json.data.discount });
+      toast(`Coupon applied: −${formatPrice(json.data.discount)}`, "success");
+    } catch {
+      toast("Network error", "error");
+    } finally {
+      setApplyingCoupon(false);
+    }
+  }
 
   if (hydrated && items.length === 0) {
     return (
@@ -83,6 +114,7 @@ export default function CheckoutPage() {
           })),
           paymentMethod: payment,
           bkashTxnId: payment === "BKASH" ? bkashTxnId : undefined,
+          couponCode: coupon?.code,
           notes: String(fd.get("notes") ?? "") || undefined,
         }),
       });
@@ -228,11 +260,38 @@ export default function CheckoutPage() {
               </li>
             ))}
           </ul>
+
+          {/* Coupon */}
+          <div className="mb-4 flex items-end gap-2 border-t border-border pt-3">
+            <div className="flex-1">
+              <Input
+                label="Coupon code"
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                placeholder="SAVE100"
+              />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={applyCoupon}
+              loading={applyingCoupon}
+            >
+              Apply
+            </Button>
+          </div>
+
           <dl className="space-y-2 border-t border-border pt-3 text-sm">
             <div className="flex justify-between">
               <dt className="text-text-secondary">Subtotal</dt>
               <dd className="tabular text-foreground">{formatPrice(subtotal)}</dd>
             </div>
+            {coupon && (
+              <div className="flex justify-between text-foreground">
+                <dt>Discount ({coupon.code})</dt>
+                <dd className="tabular">−{formatPrice(discount)}</dd>
+              </div>
+            )}
             <div className="flex justify-between">
               <dt className="text-text-secondary">Delivery</dt>
               <dd className="tabular text-foreground">
@@ -241,7 +300,7 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between border-t border-border pt-2 text-base font-bold">
               <dt className="text-foreground">Total</dt>
-              <dd className="tabular text-primary">{formatPrice(total)}</dd>
+              <dd className="tabular text-primary">{formatPrice(grandTotal)}</dd>
             </div>
           </dl>
           <Button

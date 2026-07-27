@@ -50,13 +50,22 @@ const PLACEHOLDERS = new Set([
 
 /**
  * Substrings that only ever appear in an unfilled template. A set value is not
- * the same as a configured one: a `DATABASE_URL` still carrying `USER:PASSWORD`
- * passes an emptiness check and then fails at the first query, which is how a
- * build reached the database layer before failing.
+ * the same as a configured one: a `DATABASE_URL` still carrying the template's
+ * own placeholders passes an emptiness check and then fails at the first
+ * query, which is how a build reached the database layer before failing.
+ *
+ * The angle-bracket form is deliberate on both sides of this check. The
+ * template previously spelled the two parts of a connection string's
+ * credential segment in caps, which secret scanners correctly flag as a
+ * credential pair — a false positive on the very code that exists to catch
+ * unfilled credentials. A scanner that cries wolf on its own repository is
+ * one people learn to wave through, so the placeholder was reshaped rather
+ * than the alert suppressed.
  */
 const TEMPLATE_MARKERS = [
-  "USER:PASSWORD",
-  "ep-xxxx",
+  "<user>",
+  "<password>",
+  "<project>",
   "YOURDOMAIN",
   "your-",
   "xxx",

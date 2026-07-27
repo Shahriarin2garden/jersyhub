@@ -198,7 +198,7 @@ worse than an outage:
    direct Postgres connection limit. Append Prisma's PgBouncer flags:
 
    ```
-   postgresql://USER:PASS@ep-xxx-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true&connection_limit=1
+   postgresql://<user>:<password>@<project>-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true&connection_limit=1
    ```
 
 4. Keep the **direct** (non-pooler) URL too — migrations need it.

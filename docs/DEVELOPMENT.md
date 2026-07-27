@@ -37,7 +37,7 @@ Create `.env.local` in project root:
 
 ```env
 # Database (Neon)
-DATABASE_URL="postgresql://user:pass@ep-xxx.region.neon.tech/neondb?sslmode=require"
+DATABASE_URL="postgresql://<user>:<password>@<project>.region.neon.tech/neondb?sslmode=require"
 
 # NextAuth
 NEXTAUTH_URL="http://localhost:3000"
@@ -205,7 +205,7 @@ Push to `main` branch → Render auto-deploys.
 2. Create project: "jersyhub"
 3. Copy connection string from dashboard
 4. Paste into `DATABASE_URL` in `.env.local`
-5. Connection string format: `postgresql://user:pass@ep-xxx.region.neon.tech/neondb?sslmode=require`
+5. Connection string format: `postgresql://<user>:<password>@<project>.region.neon.tech/neondb?sslmode=require`
 
 **Free tier notes:**
 - 0.5GB storage (plenty for MVP — ~50K product rows)

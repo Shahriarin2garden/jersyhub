@@ -10,8 +10,28 @@ function sixDigit(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
-/** Create + send an OTP. Enforces a resend cooldown. */
+/**
+ * Create + send an OTP. Enforces a resend cooldown.
+ *
+ * Fails closed in production when no SMS provider is configured. The dev
+ * fallback returns the code to the caller so login is testable without a
+ * gateway, and that behaviour keyed only on whether SMS was configured — so a
+ * production deploy that was merely missing its SMS credentials would have
+ * handed the code to whoever asked for it. Any phone number, no possession
+ * check, full access to that customer's name, address and order history.
+ * A missing environment variable must not degrade into an open door, so
+ * production refuses to issue a code at all rather than expose one.
+ */
 export async function requestOtp(phone: string): Promise<{ ok: boolean; error?: string; devCode?: string }> {
+  const isProd = process.env.NODE_ENV === "production";
+
+  if (isProd && !smsConfigured()) {
+    console.error(
+      "OTP requested but no SMS provider is configured. Set TWILIO_* or SMS_API_* — refusing to issue a code.",
+    );
+    return { ok: false, error: "Login by phone is temporarily unavailable. Please try again later." };
+  }
+
   const recent = await prisma.otp.findFirst({
     where: { phone, createdAt: { gt: new Date(Date.now() - RESEND_COOLDOWN_SEC * 1000) } },
     orderBy: { createdAt: "desc" },
@@ -39,8 +59,11 @@ export async function requestOtp(phone: string): Promise<{ ok: boolean; error?: 
     return { ok: false, error: "Could not send the code. Please try again." };
   }
 
-  // In dev (no SMS provider configured) expose the code so login is testable.
-  const devCode = smsConfigured() ? undefined : code;
+  // Dev only, and only when there is no gateway to deliver through. The
+  // production guard above means this branch is unreachable when NODE_ENV is
+  // "production"; the check is repeated here so the exposure is impossible to
+  // reintroduce by editing the guard alone.
+  const devCode = !isProd && !smsConfigured() ? code : undefined;
   return { ok: true, devCode };
 }
 

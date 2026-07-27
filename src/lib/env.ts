@@ -48,9 +48,25 @@ const PLACEHOLDERS = new Set([
   "generate-with: openssl rand -base64 32",
 ]);
 
+/**
+ * Substrings that only ever appear in an unfilled template. A set value is not
+ * the same as a configured one: a `DATABASE_URL` still carrying `USER:PASSWORD`
+ * passes an emptiness check and then fails at the first query, which is how a
+ * build reached the database layer before failing.
+ */
+const TEMPLATE_MARKERS = [
+  "USER:PASSWORD",
+  "ep-xxxx",
+  "YOURDOMAIN",
+  "your-",
+  "xxx",
+];
+
 function isSet(name: string): boolean {
-  const v = process.env[name];
-  return !!v && v.trim() !== "" && !PLACEHOLDERS.has(v.trim());
+  const v = process.env[name]?.trim();
+  if (!v) return false;
+  if (PLACEHOLDERS.has(v)) return false;
+  return !TEMPLATE_MARKERS.some((m) => v.includes(m));
 }
 
 let checked = false;

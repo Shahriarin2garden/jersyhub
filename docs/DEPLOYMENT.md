@@ -209,11 +209,20 @@ Run once from your machine, against the **direct** URL:
 
 ```bash
 DATABASE_URL="<direct-url>" npx prisma migrate deploy
-DATABASE_URL="<direct-url>" npm run db:seed
+DATABASE_URL="<direct-url>" ADMIN_EMAIL="…" ADMIN_PASSWORD="…" npm run db:seed
 ```
 
-`migrate deploy` applies the two existing migrations without prompting. The seed
-creates the single admin account from `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+`migrate deploy` applies the two existing migrations without prompting.
+
+`db:seed` provisions only what a live shop needs: the single admin account
+from `ADMIN_EMAIL` / `ADMIN_PASSWORD`, and the four categories. It is safe to
+run against production and safe to re-run.
+
+> **Do not run `db:seed:demo` against production.** That variant adds twelve
+> demo products named after real clubs sharing one stock photograph, five
+> fictional customers with Bangladeshi addresses, and five orders — which
+> would show up in the admin dashboard as genuine revenue. It exists for
+> development databases only.
 
 ### Step 3 — Third-party accounts
 
@@ -234,12 +243,12 @@ creates the single admin account from `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
    npx prisma migrate deploy && npm run build
    ```
 
-3. Set the environment variables. Copy `.env.production.example` to
-   `.env.production` (gitignored), fill it in, then load the whole file at
+3. Set the environment variables. Copy `.env.netlify.example` to
+   `.env.netlify` (gitignored), fill it in, then load the whole file at
    once rather than pasting values one by one in the UI:
 
    ```bash
-   netlify env:import .env.production
+   netlify env:import .env.netlify
    ```
 
 ### Step 5 — Environment variables (production values)
@@ -277,7 +286,8 @@ every customer's name, phone, and address. Do not reuse dev values.
 - [ ] Log into `/admin`, confirm the order is visible and the status flow works
 - [ ] Upload a product image through the admin panel (proves Cloudinary works)
 - [ ] Load the site on a real phone over mobile data, not just wifi
-- [ ] Confirm the seeded demo products are removed or replaced with real stock
+- [ ] Confirm the catalogue holds only real stock — `db:seed` no longer creates
+      demo products, so a fresh production database starts empty by design
 
 ---
 

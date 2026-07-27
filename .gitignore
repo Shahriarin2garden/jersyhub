@@ -49,3 +49,8 @@ next-env.d.ts
 # python bytecode (skill scripts)
 __pycache__/
 *.pyc
+
+# Production env template, filled in. Deliberately NOT named .env.production:
+# Next.js auto-loads that name during `next build`, which would silently
+# override .env and point local builds at placeholder credentials.
+.env.netlify

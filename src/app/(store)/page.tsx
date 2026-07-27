@@ -17,6 +17,7 @@ import {
   getFeaturedProducts,
   getLandingCategories,
   getLandingReviews,
+  getReviewStats,
 } from "@/lib/cached";
 import { ProductCard } from "@/components/store/product-card";
 import { StarRating } from "@/components/ui/star-rating";
@@ -30,19 +31,20 @@ export const dynamic = "force-dynamic";
 // All three reads are cached (see lib/cached.ts) — the landing page is the most
 // visited route and none of this data changes per visitor.
 async function getData() {
-  const [featured, categories, reviews] = await Promise.all([
+  const [featured, categories, reviews, stats] = await Promise.all([
     getFeaturedProducts(),
     getLandingCategories(),
     getLandingReviews(),
+    getReviewStats(),
   ]);
-  return { featured, categories, reviews };
+  return { featured, categories, reviews, stats };
 }
 
 /** Contrast-safe tone sets for the category bento — ink / cream / gold / ink. */
 const CATEGORY_TONES = [
   { bg: "bg-primary-dark text-white", meta: "text-white/55", arrow: "text-accent", line: "bg-accent" },
   { bg: "bg-card text-foreground border border-border", meta: "text-text-muted", arrow: "text-accent-dark", line: "bg-accent" },
-  { bg: "bg-accent text-ink-dark", meta: "text-ink-dark/70", arrow: "text-ink-dark", line: "bg-primary-dark/60" },
+  { bg: "bg-accent text-primary-dark", meta: "text-primary-dark/70", arrow: "text-primary-dark", line: "bg-primary-dark/60" },
   { bg: "bg-primary text-white", meta: "text-white/55", arrow: "text-accent", line: "bg-accent" },
 ] as const;
 
@@ -66,7 +68,7 @@ function Eyebrow({ children, tone = "dark" }: { children: React.ReactNode; tone?
 }
 
 export default async function LandingPage() {
-  const { featured, categories, reviews } = await getData();
+  const { featured, categories, reviews, stats } = await getData();
   const { t, locale } = await getT();
 
   const tr = (k: TranslationKey) => t(k);
@@ -159,16 +161,22 @@ export default async function LandingPage() {
                 </div>
               )}
             </div>
-            {/* Floating rating chip. */}
-            <div className="absolute -left-5 bottom-8 inline-flex items-center gap-1.5 rounded-badge bg-card px-3 py-1.5 shadow-lg">
-              <Star className="size-4 fill-rating text-rating" />
-              <span className="tabular text-sm font-semibold text-foreground">4.9</span>
-              <span className="text-xs text-text-muted">/ 5</span>
-            </div>
+            {/* Floating rating chip — the real aggregate, and absent entirely
+                until there are reviews. It previously showed a hard-coded 4.9,
+                which on a shop taking real orders is a fabricated claim. */}
+            {stats.count > 0 && (
+              <div className="absolute -left-5 bottom-8 inline-flex items-center gap-1.5 rounded-badge bg-card px-3 py-1.5 shadow-lg">
+                <Star className="size-4 fill-rating text-rating" />
+                <span className="tabular text-sm font-semibold text-foreground">
+                  {stats.average.toFixed(1)}
+                </span>
+                <span className="text-xs text-text-muted">/ 5</span>
+              </div>
+            )}
             {/* Floating delivery card — gold, balances the composition. */}
             <div className="absolute -right-5 top-8 max-w-40 rounded-card bg-accent px-3.5 py-2.5 shadow-lg">
-              <Truck className="size-5 text-ink-dark" />
-              <p className="mt-1 text-sm font-semibold leading-tight text-ink-dark">
+              <Truck className="size-5 text-primary-dark" />
+              <p className="mt-1 text-sm font-semibold leading-tight text-primary-dark">
                 {tr("home.trust.delivery")}
               </p>
             </div>
@@ -252,9 +260,46 @@ export default async function LandingPage() {
       </section>
 
       {/* ================================================================ *
-       * 4. FEATURED PRODUCTS — the commercial payload
+       * 4. PROMO — gold slab, flat, dark ink text and CTA
        * ================================================================ */}
-      <section className="mx-auto max-w-7xl px-4 pb-14 sm:pb-20">
+      {/* Sits here, mid-page, rather than at the tail. At the tail it landed
+          directly against the dark closing slab: two full-bleed heavy blocks
+          with nothing between them, which is what made the page bottom read as
+          unresolved. Here it also breaks up the long cream run between the
+          category bento and the product grid. */}
+      <section className="relative overflow-hidden bg-accent">
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-10">
+          <div className="absolute -right-16 -top-16 size-64 rounded-full border-[2.5rem] border-primary-dark" />
+          <div className="absolute -bottom-24 -left-10 size-56 rounded-full border-[2.5rem] border-primary-dark" />
+        </div>
+        <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-6 px-4 py-14 sm:flex-row sm:items-center sm:justify-between sm:py-16">
+          <div className="flex items-start gap-4">
+            <span className="hidden size-12 shrink-0 items-center justify-center rounded-full bg-primary-dark/15 sm:flex">
+              <Ticket className="size-6 text-primary-dark" />
+            </span>
+            <div>
+              <Eyebrow tone="light">{tr("home.eyebrow.promo")}</Eyebrow>
+              <h2 className="mt-2 font-display text-3xl font-semibold leading-tight text-primary-dark sm:text-4xl">
+                {tr("home.promo.title")}
+              </h2>
+              <p className="mt-1.5 max-w-md text-primary-dark/80">
+                {tr("home.promo.subtitle")}
+              </p>
+            </div>
+          </div>
+          <Link href="/shop" className="group w-full sm:w-auto">
+            <Button size="lg" fullWidth className="bg-primary-dark text-white hover:bg-primary">
+              {tr("home.promo.cta")}
+              <ArrowRight className="size-5 transition-transform duration-200 group-hover:translate-x-1" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* ================================================================ *
+       * 5. FEATURED PRODUCTS — the commercial payload
+       * ================================================================ */}
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:py-20">
         <div className="mb-8 flex flex-col gap-3">
           <Eyebrow>{tr("home.eyebrow.featured")}</Eyebrow>
           <div className="flex items-end justify-between gap-4">
@@ -287,47 +332,37 @@ export default async function LandingPage() {
       </section>
 
       {/* ================================================================ *
-       * 5. PROMO — gold slab, flat, dark ink text and CTA
-       * ================================================================ */}
-      <section className="relative overflow-hidden bg-accent">
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-10">
-          <div className="absolute -right-16 -top-16 size-64 rounded-full border-[2.5rem] border-primary-dark" />
-          <div className="absolute -bottom-24 -left-10 size-56 rounded-full border-[2.5rem] border-primary-dark" />
-        </div>
-        <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-6 px-4 py-14 sm:flex-row sm:items-center sm:justify-between sm:py-16">
-          <div className="flex items-start gap-4">
-            <span className="hidden size-12 shrink-0 items-center justify-center rounded-full bg-primary-dark/15 sm:flex">
-              <Ticket className="size-6 text-ink-dark" />
-            </span>
-            <div>
-              <Eyebrow tone="light">{tr("home.eyebrow.promo")}</Eyebrow>
-              <h2 className="mt-2 font-display text-3xl font-semibold leading-tight text-ink-dark sm:text-4xl">
-                {tr("home.promo.title")}
-              </h2>
-              <p className="mt-1.5 max-w-md text-ink-dark/80">
-                {tr("home.promo.subtitle")}
-              </p>
-            </div>
-          </div>
-          <Link href="/shop" className="group w-full sm:w-auto">
-            <Button size="lg" fullWidth className="bg-primary-dark text-white hover:bg-primary">
-              {tr("home.promo.cta")}
-              <ArrowRight className="size-5 transition-transform duration-200 group-hover:translate-x-1" />
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* ================================================================ *
        * 6. SOCIAL PROOF — approved reviews, placed just before the ask
        * ================================================================ */}
       {reviews.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-14 sm:py-20">
+        // Its own surface, bounded top and bottom. Everything from the category
+        // bento down to here sat on the same cream page background, so the
+        // sections ran together; social proof earns a band of its own.
+        <section className="border-y border-border bg-muted">
+          <div className="mx-auto max-w-7xl px-4 py-14 sm:py-20">
           <div className="mb-8 flex flex-col gap-3">
             <Eyebrow>{tr("home.eyebrow.reviews")}</Eyebrow>
-            <h2 className="font-display text-3xl font-semibold text-foreground sm:text-4xl">
-              {tr("home.reviews.title")}
-            </h2>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <h2 className="font-display text-3xl font-semibold text-foreground sm:text-4xl">
+                {tr("home.reviews.title")}
+              </h2>
+              {/* Aggregate first, individual reviews second — the summary is
+                  what a shopper scans for before reading any single quote. */}
+              {stats.count > 0 && (
+                <div className="flex shrink-0 items-center gap-3 rounded-card border border-border bg-card px-4 py-2.5">
+                  <span className="tabular font-display text-3xl font-semibold leading-none text-foreground">
+                    {stats.average.toFixed(1)}
+                  </span>
+                  <span className="flex flex-col gap-0.5">
+                    <StarRating value={stats.average} />
+                    <span className="text-xs text-text-muted">
+                      {tr("home.reviews.from")} {stats.count}{" "}
+                      {tr("home.reviews.verified")}
+                    </span>
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
@@ -359,6 +394,7 @@ export default async function LandingPage() {
               </figure>
             ))}
           </div>
+          </div>
         </section>
       )}
 
@@ -370,8 +406,11 @@ export default async function LandingPage() {
       <section className="relative overflow-hidden bg-primary-dark">
         <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/70 to-transparent" />
         <div aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
-        {/* Jersey pinstripes, then a floodlight pooled on the CTA. Flat CSS
-            gradients — no blobs here, so the hero keeps that motif to itself. */}
+        {/* Pinstripes masked to a centre pool, then the stadium floodlight and
+            its vignette. Both fade out before they reach an edge, so the
+            backdrop reads as lighting on the slab rather than a texture laid
+            over it. Flat CSS gradients — no blobs here, so the hero keeps that
+            motif to itself. */}
         <div aria-hidden className="kit-stripes pointer-events-none absolute inset-0" />
         <div aria-hidden className="floodlight pointer-events-none absolute inset-0" />
         <div className="reveal relative mx-auto flex max-w-3xl flex-col items-center gap-5 px-4 py-16 text-center sm:py-24">
@@ -386,6 +425,16 @@ export default async function LandingPage() {
               <ArrowRight className="size-5 transition-transform duration-200 group-hover:translate-x-1" />
             </Button>
           </Link>
+          {/* The same three promises the hero opens with. Repeating them here
+              is what makes this read as a bookend rather than a second,
+              unrelated dark section. */}
+          <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 pt-1">
+            {heroChips.map((c) => (
+              <li key={c} className="flex items-center gap-1.5 text-sm text-white/70">
+                <Check className="size-4 text-accent" /> {c}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </div>

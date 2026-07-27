@@ -92,7 +92,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: SP 
                       <Badge
                         className={
                           p.status === "PUBLISHED"
-                            ? "bg-accent-light text-ink-dark"
+                            ? "bg-accent-light text-primary-dark"
                             : "bg-muted text-text-muted"
                         }
                       >

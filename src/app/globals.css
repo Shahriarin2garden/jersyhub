@@ -208,24 +208,55 @@ html {
  * gradient, which a utility class can't express.
  * ------------------------------------------------------------------ */
 
-/* The diagonal pinstripe of a match jersey — ties the closing slab to the
-   product instead of repeating the hero's blob field. */
+/* The diagonal pinstripe of a match jersey. Masked to a soft centre pool: at
+   full strength edge to edge the stripes read as a texture pasted over the
+   slab rather than as part of it, and they collide hard with the section
+   boundary. Fading them out well before the edges is what makes the backdrop
+   sit *in* the section instead of on top of it. */
 .kit-stripes {
   background-image: repeating-linear-gradient(
     115deg,
-    transparent 0 14px,
-    color-mix(in srgb, var(--color-accent) 10%, transparent) 14px 16px
+    transparent 0 16px,
+    color-mix(in srgb, var(--color-accent) 7%, transparent) 16px 18px
   );
+  -webkit-mask-image: radial-gradient(70% 75% at 50% 50%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(70% 75% at 50% 50%, #000 0%, transparent 78%);
 }
 
-/* A single pool of gold light centred on the primary action, so the eye lands
-   on the one thing this section is asking for. */
+/* Stadium light: one pool of gold rising from behind the CTA, plus a vignette
+   that pulls the corners down. The two layers together give the flat slab a
+   centre of gravity, so the eye lands on the one thing the section asks for. */
 .floodlight {
-  background-image: radial-gradient(
-    55% 65% at 50% 45%,
-    color-mix(in srgb, var(--color-accent) 20%, transparent) 0%,
-    transparent 70%
-  );
+  background-image:
+    radial-gradient(
+      65% 55% at 50% 78%,
+      color-mix(in srgb, var(--color-accent) 16%, transparent) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      100% 100% at 50% 50%,
+      transparent 45%,
+      color-mix(in srgb, #000 45%, transparent) 100%
+    );
+}
+
+/* ------------------------------------------------------------------ *
+ * Horizontal scroll affordance. A plain `overflow-x-auto` rail gives no
+ * sign that there is more content off-screen — on a phone the last visible
+ * item just looks like the last item. Fading the trailing edge says
+ * "continues" without a JS scroll listener, an observer, or arrow buttons.
+ *
+ * Pure mask, so it costs one composite and nothing per frame. The scrollbar
+ * is hidden because the rail is finger-scrolled and a visible bar on a 44px
+ * row eats a third of the touch target.
+ * ------------------------------------------------------------------ */
+.scroll-fade {
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2rem), transparent 100%);
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2rem), transparent 100%);
+  scrollbar-width: none;
+}
+.scroll-fade::-webkit-scrollbar {
+  display: none;
 }
 
 /* ------------------------------------------------------------------ *

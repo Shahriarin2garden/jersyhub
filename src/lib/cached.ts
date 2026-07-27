@@ -93,6 +93,27 @@ export const getLandingReviews = unstable_cache(
   { revalidate: FIVE_MINUTES, tags: ["reviews"] },
 );
 
+/**
+ * Aggregate rating across every approved review.
+ *
+ * The landing page displayed a hard-coded "4.9 / 5" next to the hero image.
+ * On a shop that takes real money that is a fabricated claim, so the figure now
+ * comes from the reviews table — and the chip is hidden entirely until there
+ * are reviews to average.
+ */
+export const getReviewStats = unstable_cache(
+  async () => {
+    const { _avg, _count } = await prisma.review.aggregate({
+      where: { status: "APPROVED" },
+      _avg: { rating: true },
+      _count: true,
+    });
+    return { average: _avg.rating ?? 0, count: _count };
+  },
+  ["review-stats"],
+  { revalidate: FIVE_MINUTES, tags: ["reviews"] },
+);
+
 /** Category options for the shop filter sidebar. */
 export const getFilterCategories = unstable_cache(
   () =>

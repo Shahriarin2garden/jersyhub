@@ -56,6 +56,8 @@ export const dictionaries = {
     "home.promo.cta": "Start shopping",
     "home.reviews.title": "What customers say",
     "home.reviews.empty": "Reviews from verified buyers will appear here.",
+    "home.reviews.from": "from",
+    "home.reviews.verified": "verified buyers",
     "home.closing.title": "Ready to wear your colours?",
     "home.closing.subtitle": "Order today, pay when it arrives.",
     "home.eyebrow.categories": "Collections",
@@ -66,6 +68,12 @@ export const dictionaries = {
     "home.categories.subtitle": "Find your team's colours.",
     "home.explore": "Explore",
     "home.closing.eyebrow": "Style that defines you",
+
+    "notFound.title": "We couldn't find that page",
+    "notFound.subtitle":
+      "The jersey may have sold out, or the link may be out of date.",
+    "notFound.cta": "Browse all jerseys",
+    "notFound.home": "Go home",
 
     "shop.title": "Shop jerseys",
     "shop.filters": "Filters",
@@ -152,6 +160,8 @@ export const dictionaries = {
     "home.promo.cta": "কেনাকাটা শুরু করুন",
     "home.reviews.title": "ক্রেতারা যা বলছেন",
     "home.reviews.empty": "যাচাইকৃত ক্রেতাদের রিভিউ এখানে দেখা যাবে।",
+    "home.reviews.from": "—",
+    "home.reviews.verified": "জন যাচাইকৃত ক্রেতা",
     "home.closing.title": "নিজের রঙ পরার জন্য প্রস্তুত?",
     "home.closing.subtitle": "আজই অর্ডার করুন, হাতে পেয়ে টাকা দিন।",
     "home.eyebrow.categories": "কালেকশন",
@@ -162,6 +172,11 @@ export const dictionaries = {
     "home.categories.subtitle": "আপনার দলের রঙ বেছে নিন।",
     "home.explore": "দেখুন",
     "home.closing.eyebrow": "স্টাইল যা আপনাকে সংজ্ঞায়িত করে",
+
+    "notFound.title": "পেজটি খুঁজে পাওয়া যায়নি",
+    "notFound.subtitle": "জার্সিটি শেষ হয়ে যেতে পারে, বা লিংকটি পুরোনো।",
+    "notFound.cta": "সব জার্সি দেখুন",
+    "notFound.home": "হোমে ফিরুন",
 
     "shop.title": "জার্সি শপ",
     "shop.filters": "ফিল্টার",

@@ -151,8 +151,38 @@ These are committed, so the deploy steps below are only about accounts and keys:
   `/admin/*`.
 - **`robots.ts` / `sitemap.ts`** — storefront indexable; admin, API, account,
   cart and checkout excluded. Sitemap regenerates hourly.
+- **Startup environment validation** (`src/lib/env.ts`, called from the root
+  layout). Missing `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL` or a
+  placeholder `ADMIN_PASSWORD` fails the deploy loudly instead of serving a
+  shop with forgeable sessions. Optional keys log a named warning.
+- **Error boundaries** — `error.tsx`, `global-error.tsx` and a branded
+  `not-found.tsx`. Previously an unhandled error showed Next's default grey
+  screen with no route back into the catalogue.
+- **Direct-to-Cloudinary image upload.** The admin's browser uploads straight
+  to Cloudinary against a short-lived signature issued by
+  `POST /api/admin/upload`. Uploads no longer pass through a serverless
+  function, which has a ~6MB request-body limit that a 5MB image plus
+  multipart overhead sits right at the edge of breaching — and which would
+  otherwise cost function time and bandwidth to forward bytes. Images are
+  transformed on delivery (`f_auto,q_auto,c_limit`), not at upload.
 
 Verified with a real `npm run build` — it compiles clean.
+
+### Two failure modes that are now closed
+
+Both were cases where a missing environment variable degraded into something
+worse than an outage:
+
+- **OTP.** `requestOtp` returned the six-digit code in the HTTP response when
+  no SMS gateway was configured. That is the intended development fallback,
+  but it keyed on the gateway alone, not the environment — so a production
+  deploy merely missing its SMS credentials was a full authentication bypass:
+  any phone number, code read from the response, access to that customer's
+  name, address and order history. Production now refuses to issue a code at
+  all when no provider is configured.
+- **Image upload.** Placeholder Cloudinary credentials produced a 401 deep in
+  the request, presenting as a broken feature. Unset credentials are now
+  detected up front and reported as configuration, naming the variables.
 
 ---
 
@@ -204,7 +234,13 @@ creates the single admin account from `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
    npx prisma migrate deploy && npm run build
    ```
 
-3. Add every environment variable from `.env.example` in Netlify's UI.
+3. Set the environment variables. Copy `.env.production.example` to
+   `.env.production` (gitignored), fill it in, then load the whole file at
+   once rather than pasting values one by one in the UI:
+
+   ```bash
+   netlify env:import .env.production
+   ```
 
 ### Step 5 — Environment variables (production values)
 

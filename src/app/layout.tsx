@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 import { getLocale } from "@/i18n/server";
+import { assertEnv } from "@/lib/env";
 
 // One minimal, premium sans across the whole UI — headings, body, wordmark.
 // Hierarchy comes from weight and tracking, not from mixing families. DM Sans
@@ -35,6 +36,10 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Fails the request loudly in production if a required variable is missing,
+  // rather than letting the shop run against a broken configuration.
+  assertEnv();
+
   const locale = await getLocale();
 
   return (

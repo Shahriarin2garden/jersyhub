@@ -72,7 +72,7 @@ export default async function DashboardPage() {
                   <TD className="tabular font-medium text-foreground">
                     {o.orderNumber}
                   </TD>
-                  <TD>{o.customer.name}</TD>
+                  <TD className="max-w-36 truncate sm:max-w-none">{o.customer.name}</TD>
                   <TD className="hidden sm:table-cell tabular">{o._count.items}</TD>
                   <TD className="tabular">{formatPrice(o.total)}</TD>
                   <TD><StatusBadge status={o.status} /></TD>
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
                   <TD>
                     <Link
                       href={`/admin/orders/${o.id}`}
-                      className="inline-flex items-center gap-1 text-primary hover:underline"
+                      className="inline-flex min-h-11 items-center gap-1 text-ink hover:underline"
                     >
                       <Eye className="size-4" /> View
                     </Link>

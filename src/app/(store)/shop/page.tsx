@@ -13,6 +13,7 @@ import {
   type ProductFilters,
 } from "@/lib/product-query";
 import { getT } from "@/i18n/server";
+import { getFilterCategories } from "@/lib/cached";
 
 export const metadata = { title: "Shop" };
 export const dynamic = "force-dynamic";
@@ -48,10 +49,8 @@ export default async function ShopPage({ searchParams }: { searchParams: SP }) {
       take: PAGE_SIZE,
     }),
     prisma.product.count({ where }),
-    prisma.category.findMany({
-      orderBy: { displayOrder: "asc" },
-      select: { slug: true, name: true },
-    }),
+    // Cached: the filter options are identical for every visitor.
+    getFilterCategories(),
   ]);
 
   const { t, locale } = await getT();
@@ -69,13 +68,15 @@ export default async function ShopPage({ searchParams }: { searchParams: SP }) {
         <SortSelect />
       </div>
 
-      <div className="flex gap-8">
+      {/* Column on mobile so the Filters trigger stacks above the grid; below lg
+          it would otherwise sit beside the products and squeeze the columns. */}
+      <div className="flex flex-col lg:flex-row lg:gap-8">
         <ShopFilters categories={categories} />
 
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           {products.length > 0 ? (
             <>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
                 {products.map((p) => (
                   <ProductCard key={p.id} product={p} locale={locale} />
                 ))}

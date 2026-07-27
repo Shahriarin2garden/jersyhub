@@ -61,7 +61,7 @@ export default function CheckoutPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
         <p className="text-text-secondary">Your cart is empty.</p>
-        <Link href="/shop" className="mt-4 inline-block text-primary hover:underline">
+        <Link href="/shop" className="mt-4 inline-block text-ink hover:underline">
           Go shopping
         </Link>
       </div>
@@ -300,7 +300,7 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between border-t border-border pt-2 text-base font-bold">
               <dt className="text-foreground">Total</dt>
-              <dd className="tabular text-primary">{formatPrice(grandTotal)}</dd>
+              <dd className="tabular text-ink">{formatPrice(grandTotal)}</dd>
             </div>
           </dl>
           <Button
@@ -315,7 +315,7 @@ export default function CheckoutPage() {
           </Button>
           <Link
             href="/cart"
-            className="mt-3 block text-center text-sm text-primary hover:underline"
+            className="mt-3 block text-center text-sm text-ink hover:underline"
           >
             Edit cart
           </Link>

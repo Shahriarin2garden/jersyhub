@@ -32,7 +32,7 @@ export default async function AdminOrderDetail({
     <div className="space-y-6">
       <Link
         href="/admin/orders"
-        className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+        className="inline-flex items-center gap-1 text-sm text-ink hover:underline"
       >
         <ArrowLeft className="size-4" /> Back to orders
       </Link>
@@ -92,7 +92,7 @@ export default async function AdminOrderDetail({
               </div>
               <div className="flex justify-between border-t border-border pt-2 text-base font-bold">
                 <dt className="text-foreground">Total</dt>
-                <dd className="tabular text-primary">{formatPrice(order.total)}</dd>
+                <dd className="tabular text-ink">{formatPrice(order.total)}</dd>
               </div>
             </dl>
           </Card>
@@ -105,7 +105,7 @@ export default async function AdminOrderDetail({
             <p className="font-medium text-foreground">{order.customer.name}</p>
             <a
               href={`tel:${order.customer.phone}`}
-              className="flex items-center gap-2 text-sm text-primary hover:underline"
+              className="flex items-center gap-2 text-sm text-ink hover:underline"
             >
               <Phone className="size-4" /> {order.customer.phone}
             </a>

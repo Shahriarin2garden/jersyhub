@@ -38,7 +38,7 @@ export default async function OrderPage({
       <Card className="space-y-6">
         <div className="text-center">
           <p className="text-sm text-text-muted">Order number</p>
-          <p className="tabular font-display text-3xl font-bold text-primary">
+          <p className="tabular font-display text-3xl font-bold text-ink">
             {order.orderNumber}
           </p>
           <div className="mt-2">
@@ -83,7 +83,7 @@ export default async function OrderPage({
             </div>
             <div className="flex justify-between text-base font-bold">
               <dt className="text-foreground">Total</dt>
-              <dd className="tabular text-primary">{formatPrice(order.total)}</dd>
+              <dd className="tabular text-ink">{formatPrice(order.total)}</dd>
             </div>
           </dl>
         </div>

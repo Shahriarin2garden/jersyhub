@@ -10,4 +10,8 @@ export const prisma =
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Cached in every environment, production included. On a serverless host each
+// warm invocation reuses the same container, so without this we would build a
+// new PrismaClient — and a new pool — per request and exhaust the database's
+// connection limit. Pair this with Neon's pooled (`-pooler`) connection string.
+globalForPrisma.prisma = prisma;

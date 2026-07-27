@@ -28,7 +28,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             aria-invalid={!!error}
             className={cn(
               "h-11 w-full appearance-none rounded-button border bg-card px-3 pr-9 text-base text-foreground",
-              "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-background",
+              "focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-1 focus:ring-offset-background",
               error ? "border-destructive" : "border-border",
               className,
             )}

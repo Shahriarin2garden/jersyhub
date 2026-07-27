@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { ok, fail, fromZod } from "@/lib/api";
 import { requireAdmin } from "@/lib/guard";
+import { revalidateReviews } from "@/lib/cached";
 
 const schema = z.object({ status: z.enum(["PENDING", "APPROVED", "REJECTED"]) });
 
@@ -26,6 +27,7 @@ export async function PATCH(
     where: { id },
     data: { status: parsed.data.status },
   });
+  revalidateReviews();
   return ok(review);
 }
 
@@ -36,5 +38,6 @@ export async function DELETE(
   if (!(await requireAdmin())) return fail("Unauthorized", 401);
   const { id } = await params;
   await prisma.review.delete({ where: { id } });
+  revalidateReviews();
   return ok({ id });
 }

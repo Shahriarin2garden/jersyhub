@@ -76,11 +76,11 @@ export default async function OrdersPage({ searchParams }: { searchParams: SP })
                   className="cursor-pointer hover:bg-muted/40"
                 >
                   <TD className="tabular font-medium">
-                    <Link href={`/admin/orders/${o.id}`} className="text-primary hover:underline">
+                    <Link href={`/admin/orders/${o.id}`} className="text-ink hover:underline">
                       {o.orderNumber}
                     </Link>
                   </TD>
-                  <TD>{o.customer.name}</TD>
+                  <TD className="max-w-36 truncate sm:max-w-none">{o.customer.name}</TD>
                   <TD className="hidden md:table-cell tabular text-text-muted">
                     {o.customer.phone}
                   </TD>

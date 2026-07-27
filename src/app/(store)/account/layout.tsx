@@ -35,7 +35,7 @@ export default async function AccountLayout({
               <Link
                 key={href}
                 href={href}
-                className="flex items-center gap-2 rounded-button px-3 py-2 text-sm font-medium text-text-secondary hover:bg-muted"
+                className="flex min-h-11 items-center gap-2 rounded-button px-3 text-sm font-medium text-text-secondary hover:bg-muted"
               >
                 <Icon className="size-4" /> {label}
               </Link>

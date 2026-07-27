@@ -41,7 +41,7 @@ export default async function AccountOrders() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <Link
               href={`/order/${o.orderNumber}`}
-              className="tabular font-semibold text-primary hover:underline"
+              className="tabular font-semibold text-ink hover:underline"
             >
               {o.orderNumber}
             </Link>

@@ -8,9 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "db:seed": "prisma db seed",
+    "db:seed:demo": "prisma db seed -- --demo",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "verify:cloudinary": "node scripts/verify-cloudinary.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

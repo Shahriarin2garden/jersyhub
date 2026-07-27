@@ -37,7 +37,7 @@ Create `.env.local` in project root:
 
 ```env
 # Database (Neon)
-DATABASE_URL="postgresql://user:pass@ep-xxx.region.neon.tech/neondb?sslmode=require"
+DATABASE_URL="postgresql://<user>:<password>@<project>.region.neon.tech/neondb?sslmode=require"
 
 # NextAuth
 NEXTAUTH_URL="http://localhost:3000"
@@ -48,10 +48,31 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
 CLOUDINARY_API_KEY="your-api-key"
 CLOUDINARY_API_SECRET="your-api-secret"
 
-# Admin seed (first run only)
-ADMIN_EMAIL="admin@jersyhub.com"
-ADMIN_PASSWORD="change-this-password"
+# Fixed single admin (seed upserts this and deletes any other admin row)
+ADMIN_EMAIL="admin@nexvive.com"
+ADMIN_PASSWORD="change-this-strong-password"
+
+# SMS / OTP — customer login sends a 6-digit code to a BD phone.
+# Leave ALL blank in dev: the code is returned in the app response so login works.
+# Twilio (global, incl. BD; free trial):
+TWILIO_ACCOUNT_SID=""
+TWILIO_AUTH_TOKEN=""
+TWILIO_FROM=""
+# OR a Bangladesh gateway (bulksmsbd.net / sms.net.bd style):
+SMS_API_URL=""
+SMS_API_KEY=""
+SMS_SENDER_ID=""
 ```
+
+**Admin is a single fixed account.** There is no admin sign-up flow; `npm run
+db:seed` (or editing `ADMIN_EMAIL`/`ADMIN_PASSWORD` then re-seeding) is the only
+way to set it, and the seed removes every other admin row so exactly one remains.
+
+**OTP flow:** `requestOtp` (`src/lib/otp.ts`) generates a 6-digit code, stores a
+bcrypt hash with a 5-min TTL, 60s resend cooldown, and 5-attempt cap, then calls
+`sendSms` (`src/lib/sms.ts`). With no provider configured the code is returned as
+`devCode` so login is testable; configure Twilio or a BD gateway to send real SMS.
+BD numbers are normalised to `8801XXXXXXXXX` before dispatch.
 
 **Generate NEXTAUTH_SECRET:**
 ```bash
@@ -184,7 +205,7 @@ Push to `main` branch → Render auto-deploys.
 2. Create project: "jersyhub"
 3. Copy connection string from dashboard
 4. Paste into `DATABASE_URL` in `.env.local`
-5. Connection string format: `postgresql://user:pass@ep-xxx.region.neon.tech/neondb?sslmode=require`
+5. Connection string format: `postgresql://<user>:<password>@<project>.region.neon.tech/neondb?sslmode=require`
 
 **Free tier notes:**
 - 0.5GB storage (plenty for MVP — ~50K product rows)

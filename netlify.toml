@@ -1,0 +1,23 @@
+# Netlify build configuration.
+#
+# `prisma migrate deploy` runs before the build so a deploy that introduces a
+# schema change applies it first. It is non-interactive and a no-op when there
+# is nothing pending, so it is safe on every deploy.
+#
+# Migrations use DIRECT_URL, declared as `directUrl` in prisma/schema.prisma.
+# PgBouncer runs in transaction pooling mode and cannot hold the advisory lock
+# a migration takes, so running this against the pooled host fails the build.
+# Both DATABASE_URL (pooled, for runtime) and DIRECT_URL (non-pooled, for
+# migrations) must be set in the site's environment.
+
+[build]
+  command = "npx prisma migrate deploy && npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Prisma's engine download is cached between builds; this keeps it predictable.
+  PRISMA_CLI_BINARY_TARGETS = "native"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

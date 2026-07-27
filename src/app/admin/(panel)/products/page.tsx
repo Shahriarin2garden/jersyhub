@@ -80,7 +80,9 @@ export default async function ProductsPage({ searchParams }: { searchParams: SP 
                             />
                           )}
                         </div>
-                        <span className="font-medium text-foreground">{p.name}</span>
+                        <span className="max-w-40 truncate font-medium text-foreground sm:max-w-none">
+                          {p.name}
+                        </span>
                       </div>
                     </TD>
                     <TD className="hidden sm:table-cell">{p.category.name}</TD>
@@ -100,7 +102,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: SP 
                     <TD>
                       <Link
                         href={`/admin/products/${p.id}`}
-                        className="inline-flex items-center gap-1 text-primary hover:underline"
+                        className="inline-flex min-h-11 items-center gap-1 text-ink hover:underline"
                       >
                         <Pencil className="size-4" /> Edit
                       </Link>
@@ -124,7 +126,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: SP 
           description="Add your first jersey to the catalog."
           action={
             <Link href="/admin/products/new">
-              <span className="text-primary hover:underline">Add product</span>
+              <span className="text-ink hover:underline">Add product</span>
             </Link>
           }
         />

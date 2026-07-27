@@ -5,6 +5,7 @@ import { ok, paginated, fail, fromZod, getPage } from "@/lib/api";
 import { requireAdmin } from "@/lib/guard";
 import { productSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
+import { revalidateCatalogue } from "@/lib/cached";
 
 export async function GET(req: NextRequest) {
   if (!(await requireAdmin())) return fail("Unauthorized", 401);
@@ -73,5 +74,6 @@ export async function POST(req: NextRequest) {
     },
     include: { variants: true },
   });
+  revalidateCatalogue();
   return ok(product, 201);
 }

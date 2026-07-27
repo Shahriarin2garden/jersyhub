@@ -1,16 +1,29 @@
-"use client";
-
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ShoppingCart, Heart, User, Search } from "lucide-react";
-import { useCart } from "@/hooks/use-cart";
-import { useI18n, LocaleToggle } from "@/components/i18n-provider";
+import { Heart, User } from "lucide-react";
+import { LocaleToggle } from "@/components/i18n-provider";
 import { BrandLogo } from "@/components/brand-logo";
+import { NavSearch } from "@/components/store/nav-search";
+import { CartLink } from "@/components/store/cart-link";
+import { CategoryStrip } from "@/components/store/category-strip";
+import { getT, localized } from "@/i18n/server";
 
 type Category = { slug: string; name: string; nameBn: string | null };
 
-export function Navbar({
+/**
+ * Store header.
+ *
+ * This is a Server Component. It used to be `"use client"` in its entirety,
+ * which meant the logo, the account and wishlist links and all four category
+ * links were shipped as JavaScript and hydrated on every page load, for no
+ * behaviour at all. Only three things here genuinely need the client — search
+ * (state + router), the cart badge (localStorage) and the category rail
+ * (current URL) — so those are islands and the rest is plain markup.
+ *
+ * Only the 64px top bar is sticky. The category rail sits outside it and
+ * scrolls away; pinning both left ~108px of permanent chrome on a phone.
+ */
+export async function Navbar({
   loggedIn,
   userName,
   categories,
@@ -19,93 +32,68 @@ export function Navbar({
   userName: string | null;
   categories: Category[];
 }) {
-  const { count, hydrated } = useCart();
-  const { t, locale } = useI18n();
-  const router = useRouter();
-  const [q, setQ] = React.useState("");
-
-  const catLabel = (c: Category) =>
-    locale === "bn" && c.nameBn ? c.nameBn : c.name;
-
-  const submitSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const query = q.trim();
-    router.push(query ? `/shop?search=${encodeURIComponent(query)}` : "/shop");
-  };
+  const { t, locale } = await getT();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
-        <BrandLogo size={48} priority />
+    <>
+      {/* Opaque, not `bg-card/95 backdrop-blur`. A blurred backdrop on a
+          sticky element is recomposited on every scroll frame — the most
+          expensive thing in this header on the low-end Android hardware most
+          of our traffic runs on — and at 95% opacity the blur was barely
+          visible. Dropping it costs nothing and buys back the scroll budget. */}
+      <header className="sticky top-0 z-40 border-b border-border bg-card">
+        <div className="relative mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:gap-4">
+          <BrandLogo size={44} priority />
 
-        {/* Search (desktop) */}
-        <form onSubmit={submitSearch} className="relative hidden flex-1 md:block">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t("nav.search")}
-            className="h-10 w-full rounded-button border border-border bg-background pl-9 pr-3 text-base text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </form>
+          <NavSearch label={t("nav.search")} />
 
-        <nav className="ml-auto flex items-center gap-1">
-          <LocaleToggle />
-          <Link
-            href="/shop"
-            className="hidden px-3 text-base font-medium text-text-secondary hover:text-primary sm:block"
-          >
-            {t("nav.shop")}
-          </Link>
-          <Link
-            href="/account/wishlist"
-            aria-label={t("nav.wishlist")}
-            className="flex size-10 items-center justify-center rounded-button hover:bg-muted"
-          >
-            <Heart className="size-5 text-foreground" />
-          </Link>
-          <Link
-            href={loggedIn ? "/account" : "/account/login"}
-            aria-label={t("nav.account")}
-            className="flex items-center gap-1.5 rounded-button px-2 py-2 hover:bg-muted"
-          >
-            <User className="size-5 text-foreground" />
-            <span className="hidden max-w-24 truncate text-sm text-foreground lg:inline">
-              {loggedIn ? userName : t("nav.login")}
-            </span>
-          </Link>
-          <Link
-            href="/cart"
-            aria-label={t("nav.cart")}
-            className="relative flex size-10 items-center justify-center rounded-button hover:bg-muted"
-          >
-            <ShoppingCart className="size-5 text-foreground" />
-            {hydrated && count > 0 && (
-              <span className="tabular absolute -right-0.5 -top-0.5 flex min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-primary-dark">
-                {count}
-              </span>
-            )}
-          </Link>
-        </nav>
-      </div>
+          <nav aria-label="Account" className="ml-auto flex items-center gap-0.5 sm:gap-1">
+            <LocaleToggle />
 
-      {/* Category strip */}
-      <div className="border-t border-border bg-background">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 overflow-x-auto px-4 py-2 text-sm">
-          <Link href="/shop" className="whitespace-nowrap font-medium text-text-secondary hover:text-primary">
-            {t("nav.shop")}
-          </Link>
-          {categories.map((c) => (
             <Link
-              key={c.slug}
-              href={`/shop?category=${c.slug}`}
-              className="whitespace-nowrap text-text-secondary hover:text-primary"
+              href="/shop"
+              className="hidden min-h-11 items-center px-3 text-base font-medium text-text-secondary transition-colors hover:text-ink sm:flex"
             >
-              {catLabel(c)}
+              {t("nav.shop")}
             </Link>
-          ))}
+
+            <Link
+              href="/account/wishlist"
+              aria-label={t("nav.wishlist")}
+              className="flex size-11 items-center justify-center rounded-button hover:bg-muted"
+            >
+              <Heart className="size-5 text-foreground" />
+            </Link>
+
+            <Link
+              href={loggedIn ? "/account" : "/account/login"}
+              aria-label={t("nav.account")}
+              className="flex min-h-11 items-center gap-1.5 rounded-button px-2 hover:bg-muted"
+            >
+              <User className="size-5 shrink-0 text-foreground" />
+              <span className="hidden max-w-24 truncate text-sm text-foreground lg:inline">
+                {loggedIn ? userName : t("nav.login")}
+              </span>
+            </Link>
+
+            <CartLink label={t("nav.cart")} />
+          </nav>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* useSearchParams needs a Suspense boundary so it cannot opt the
+          surrounding tree into a client-side bailout during prerender. */}
+      <React.Suspense
+        fallback={<div className="h-11 border-b border-border bg-background" />}
+      >
+        <CategoryStrip
+          shopLabel={t("nav.shop")}
+          items={categories.map((c) => ({
+            slug: c.slug,
+            label: localized(c, "name", "nameBn", locale),
+          }))}
+        />
+      </React.Suspense>
+    </>
   );
 }

@@ -55,30 +55,63 @@ function orderNumber(): string {
   return r;
 }
 
-async function main() {
-  console.log("Seeding…");
+/**
+ * Demo catalogue, customers and orders are opt-in.
+ *
+ * The deploy runbook runs this seed against the production database to create
+ * the admin account. Unconditionally it also created twelve products named
+ * after real clubs sharing one stock photo, five fictional customers with
+ * Bangladeshi names and addresses, and five orders — which would appear in the
+ * live admin dashboard as genuine revenue, and put trademarked names on a
+ * storefront next to unrelated images.
+ *
+ * So: the admin account and the category taxonomy are provisioning and always
+ * run. Everything else needs SEED_DEMO=1 (`npm run db:seed:demo`).
+ */
+// A CLI flag rather than an environment variable: `SEED_DEMO=1 npm run …`
+// does not work in npm scripts on Windows, and this has to be reliable on the
+// machine the shop is actually run from.
+const DEMO = process.argv.includes("--demo") || process.env.SEED_DEMO === "1";
 
-  // Admin
-  const email = process.env.ADMIN_EMAIL ?? "admin@jersyhub.com";
-  const password = process.env.ADMIN_PASSWORD ?? "changeme123";
+async function main() {
+  console.log(DEMO ? "Seeding (with demo data)…" : "Seeding…");
+
+  // Admin — exactly ONE, permanent. Upsert the configured account and remove
+  // any other admin row so a single fixed login is guaranteed.
+  const email = process.env.ADMIN_EMAIL ?? "admin@nexvive.com";
+  const password = process.env.ADMIN_PASSWORD ?? "NexVive@Admin#2026";
   const passwordHash = await bcrypt.hash(password, 10);
   await prisma.admin.upsert({
     where: { email },
-    update: { passwordHash, name: "Store Admin" },
-    create: { email, passwordHash, name: "Store Admin" },
+    update: { passwordHash, name: "NexVive Admin" },
+    create: { email, passwordHash, name: "NexVive Admin" },
   });
-  console.log(`Admin: ${email}`);
+  await prisma.admin.deleteMany({ where: { NOT: { email } } });
+  console.log(`Admin (single): ${email}`);
 
-  // Categories
+  // Categories are the real taxonomy the storefront navigates by, not demo
+  // content, so they are always provisioned. No stock image is attached
+  // outside demo mode — the landing tiles are imageless by design, and an
+  // Unsplash URL on a live category is someone else's photograph.
   const catMap = new Map<string, string>();
   for (const c of CATEGORIES) {
     const row = await prisma.category.upsert({
       where: { slug: c.slug },
       update: { name: c.name, displayOrder: c.displayOrder },
-      create: { ...c, image: IMG(`cat=${c.slug}`) },
+      create: { ...c, image: DEMO ? IMG(`cat=${c.slug}`) : null },
     });
     catMap.set(c.slug, row.id);
   }
+
+  if (!DEMO) {
+    console.log(
+      `Categories: ${CATEGORIES.length}. Skipping demo catalogue, customers and orders.\n` +
+        "Run `npm run db:seed:demo` for a populated development database.",
+    );
+    return;
+  }
+
+  // ----- Everything below is demo data. Never runs without SEED_DEMO=1. -----
 
   // Products + variants
   const createdProducts: { id: string; variantIds: string[]; price: number }[] = [];

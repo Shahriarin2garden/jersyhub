@@ -46,7 +46,7 @@ export function CustomerDetailButton({ customerId }: { customerId: string }) {
 
   return (
     <>
-      <button onClick={load} className="text-primary hover:underline">
+      <button onClick={load} className="text-ink hover:underline">
         View
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title="Customer">

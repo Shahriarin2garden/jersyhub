@@ -67,7 +67,7 @@ export function StatusTimeline({
               <p
                 className={cn(
                   "font-medium",
-                  isCurrent ? "text-primary" : done ? "text-foreground" : "text-text-muted",
+                  isCurrent ? "text-ink" : done ? "text-foreground" : "text-text-muted",
                 )}
               >
                 {stepLabels[step]}

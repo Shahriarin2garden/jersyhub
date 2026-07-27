@@ -13,8 +13,17 @@
   --color-muted: #f0ebe0;
   --color-foreground: #171512;
   --color-text-secondary: #4a453c;
-  --color-text-muted: #8a8275;
+  /* 4.9:1 on the light card — the previous #8a8275 sat at 3.8:1 and failed AA
+     for the body copy, helper text and placeholders that all use it. */
+  --color-text-muted: #78715f;
   --color-border: #e7e0d0;
+
+  /* Brand emphasis *text* (prices, totals, inline links, active steps).
+     Separate from `primary` because `primary` is a constant brand black used
+     as a FILL — `bg-primary text-white` has to stay black in both themes,
+     while the same colour as text on a dark surface is invisible. */
+  --color-ink: #171512;
+  --color-ink-hover: #3f382c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +35,11 @@
     --color-text-secondary: #c9c2b2;
     --color-text-muted: #8a8375;
     --color-border: #332e24;
+
+    /* Gold carries brand emphasis on dark surfaces, where black cannot.
+       Lighter than `accent` so it clears 4.5:1 as small text on the card. */
+    --color-ink: #e2bf6a;
+    --color-ink-hover: #f0d693;
   }
 }
 
@@ -52,18 +66,23 @@
   --color-text-secondary: var(--color-text-secondary);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
+  --color-ink: var(--color-ink);
+  --color-ink-hover: var(--color-ink-hover);
 
-  /* Status — background */
+  /* Status chips. The pairs are constant across themes — a light chip reads
+     correctly on both the cream and the black card — so each text colour is
+     picked to clear 4.5:1 against its own background at the 12px badge size.
+     Shipped, delivered and cancelled were previously below that. */
   --color-status-pending-bg: #faeeda;
-  --color-status-pending-text: #854f0b;
+  --color-status-pending-text: #854f0b;   /* 5.9:1 */
   --color-status-confirmed-bg: #e6f1fb;
-  --color-status-confirmed-text: #185fa5;
+  --color-status-confirmed-text: #185fa5; /* 5.8:1 */
   --color-status-shipped-bg: #f7edd4;
-  --color-status-shipped-text: #8a6d12;
+  --color-status-shipped-text: #7a5f0a;   /* 5.3:1 (was #8a6d12, 4.2:1) */
   --color-status-delivered-bg: #dcfce7;
-  --color-status-delivered-text: #16a34a;
+  --color-status-delivered-text: #15803d; /* 4.6:1 (was #16a34a, 3.0:1) */
   --color-status-cancelled-bg: #fef2f2;
-  --color-status-cancelled-text: #dc2626;
+  --color-status-cancelled-text: #b91c1c; /* 6.0:1 (was #dc2626, 4.4:1) */
 
   /* Ratings — stars share the brand gold family (a gold brand can't also
      reserve gold for stars alone). Slightly brighter than `accent` so a filled
@@ -75,14 +94,12 @@
   --color-success: #16a34a;
   --color-success-light: #dcfce7;
 
-  /* Fonts. Cormorant (serif) sets the luxury-fashion display voice; Montserrat
-     carries body. Bangla is the default locale and neither Latin family has
-     Bengali glyphs, so Noto Sans Bengali sits in both stacks — Latin runs render
-     in the brand face, Bengali runs in Noto, within the same line. */
-  --font-display: var(--font-cormorant), var(--font-noto-bengali), Georgia,
-    "Times New Roman", serif;
-  --font-body: var(--font-montserrat), var(--font-noto-bengali), system-ui,
-    sans-serif;
+  /* Fonts — one minimal, premium sans everywhere. Display and body share the
+     family (DM Sans → Hind Siliguri for Bengali); hierarchy is weight + tracking,
+     not a second family. Bangla is the default locale, so Hind sits right after
+     DM Sans in the same stack and renders Bengali runs within a mixed line. */
+  --font-display: var(--font-dmsans), var(--font-hind), system-ui, sans-serif;
+  --font-body: var(--font-dmsans), var(--font-hind), system-ui, sans-serif;
 
   /* Radii */
   --radius-button: 8px;
@@ -106,6 +123,7 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
   color: var(--color-foreground);
   text-wrap: balance;
+  letter-spacing: -0.02em; /* tighten the geometric sans for a premium set */
 }
 
 .tabular {
@@ -142,39 +160,121 @@ button:disabled,
     0 0 0 4px var(--color-accent);
 }
 
+/* Anchor links (e.g. the hero's "browse categories") glide to their section
+   instead of teleporting, so the jump reads as movement through the page. */
+html {
+  scroll-behavior: smooth;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* ------------------------------------------------------------------ *
- * Scroll reveal. Ends at the final state, so when prefers-reduced-motion
- * collapses the duration the content is simply visible — never stuck at
- * opacity 0. Browsers without animation-timeline run it once on load.
+ * Reveal — a one-time fade-and-rise on load. It always animates TO the
+ * final visible state (opacity 1), so content can never get trapped
+ * invisible: reduced-motion collapses the duration and the element is just
+ * shown. Deliberately NOT scroll-timeline-linked — a view() timeline can
+ * leave sections stuck at opacity 0 when its range never resolves.
  * ------------------------------------------------------------------ */
 @keyframes reveal-rise {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: none; }
 }
 
 .reveal {
-  animation: reveal-rise 500ms ease-out both;
+  animation: reveal-rise 300ms ease-out both;
 }
 
-@supports (animation-timeline: view()) {
-  .reveal {
-    animation-timeline: view();
-    animation-range: entry 0% cover 22%;
-    animation-fill-mode: both;
-  }
+/* Stagger steps for grid/list children: 40ms apart — the 30–50ms band that
+   reads as one sequence rather than as items arriving separately. */
+.reveal-delay-1 { animation-delay: 40ms; }
+.reveal-delay-2 { animation-delay: 80ms; }
+.reveal-delay-3 { animation-delay: 120ms; }
+.reveal-delay-4 { animation-delay: 160ms; }
+.reveal-delay-5 { animation-delay: 200ms; }
+.reveal-delay-6 { animation-delay: 240ms; }
+
+/* ------------------------------------------------------------------ *
+ * Closing-CTA backdrop. Two flat gradient layers, no image and no motion,
+ * so the section costs nothing and can't repaint. Kept here rather than in
+ * Tailwind utilities because both need `var(--color-accent)` inside a
+ * gradient, which a utility class can't express.
+ * ------------------------------------------------------------------ */
+
+/* The diagonal pinstripe of a match jersey. Masked to a soft centre pool: at
+   full strength edge to edge the stripes read as a texture pasted over the
+   slab rather than as part of it, and they collide hard with the section
+   boundary. Fading them out well before the edges is what makes the backdrop
+   sit *in* the section instead of on top of it. */
+.kit-stripes {
+  background-image: repeating-linear-gradient(
+    115deg,
+    transparent 0 16px,
+    color-mix(in srgb, var(--color-accent) 7%, transparent) 16px 18px
+  );
+  -webkit-mask-image: radial-gradient(70% 75% at 50% 50%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(70% 75% at 50% 50%, #000 0%, transparent 78%);
 }
 
-.reveal-delay-1 { animation-delay: 60ms; }
-.reveal-delay-2 { animation-delay: 120ms; }
-.reveal-delay-3 { animation-delay: 180ms; }
-.reveal-delay-4 { animation-delay: 240ms; }
+/* Stadium light: one pool of gold rising from behind the CTA, plus a vignette
+   that pulls the corners down. The two layers together give the flat slab a
+   centre of gravity, so the eye lands on the one thing the section asks for. */
+.floodlight {
+  background-image:
+    radial-gradient(
+      65% 55% at 50% 78%,
+      color-mix(in srgb, var(--color-accent) 16%, transparent) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      100% 100% at 50% 50%,
+      transparent 45%,
+      color-mix(in srgb, #000 45%, transparent) 100%
+    );
+}
+
+/* ------------------------------------------------------------------ *
+ * Horizontal scroll affordance. A plain `overflow-x-auto` rail gives no
+ * sign that there is more content off-screen — on a phone the last visible
+ * item just looks like the last item. Fading the trailing edge says
+ * "continues" without a JS scroll listener, an observer, or arrow buttons.
+ *
+ * Pure mask, so it costs one composite and nothing per frame. The scrollbar
+ * is hidden because the rail is finger-scrolled and a visible bar on a 44px
+ * row eats a third of the touch target.
+ * ------------------------------------------------------------------ */
+.scroll-fade {
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2rem), transparent 100%);
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2rem), transparent 100%);
+  scrollbar-width: none;
+}
+.scroll-fade::-webkit-scrollbar {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * Modal entrance. A dialog that snaps into place reads as a glitch; the
+ * scrim fades and the panel rises a little so the change of context is
+ * legible. Both end at the visible state, and reduced-motion collapses the
+ * duration above, so neither can strand the dialog mid-animation.
+ * ------------------------------------------------------------------ */
+@keyframes scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+.scrim-in { animation: scrim-in 150ms ease-out both; }
+.panel-in { animation: panel-in 200ms ease-out both; }
 
 /* Skeleton shimmer */
 @keyframes shimmer {

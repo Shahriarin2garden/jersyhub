@@ -121,38 +121,40 @@ genuinely needed twice, it belongs in `globals.css` as a token first.
 Loaded via `next/font/google` in `src/app/layout.tsx` (self-hosted, no render-
 blocking request, `display: swap`):
 
-| Family              | CSS variable            | Role                          |
-|---------------------|-------------------------|-------------------------------|
-| Cormorant           | `--font-cormorant`      | Display / headings (`--font-display`) — high-contrast luxury serif |
-| Montserrat          | `--font-montserrat`     | Body + **wordmark** (`--font-body`) — geometric sans |
-| Noto Sans Bengali   | `--font-noto-bengali`   | Bangla glyph coverage         |
+**One minimal, premium sans across the whole UI** — headings, body, and wordmark
+share the family; hierarchy comes from **weight and tracking**, not a second face.
+A high-contrast serif (Cormorant) was tried and dropped: its thin strokes read
+poorly at hero and card sizes. DM Sans stays crisp everywhere and reads clean-yet-
+premium.
 
-Chosen with the ui-ux-pro-max design engine for *luxury fashion e-commerce*:
-Cormorant is the elegant, high-contrast serif voice for headlines; Montserrat is
-the clean geometric body that also matches the wide-tracked NexVive wordmark.
+| Family        | CSS variable      | Script  | Role                                    |
+|---------------|-------------------|---------|-----------------------------------------|
+| DM Sans       | `--font-dmsans`   | Latin   | Everything — display, body, wordmark    |
+| Hind Siliguri | `--font-hind`     | Bengali | Bengali counterpart, same sans voice    |
 
-**The wordmark uses `--font-body` (Montserrat), not the serif** — the NexVive
-mark is geometric sans; render it `font-body font-bold uppercase tracking-[0.2em]`
-with `NEX` in `foreground` + `VIVE` in `accent`.
+Both `--font-display` and `--font-body` = DM Sans → Hind Siliguri → system sans.
+Headings carry `letter-spacing: -0.02em` (set globally on `h1–h4`) so the geometric
+sans sets tightly and premium; the hero uses `font-bold tracking-tight`.
 
-**Bangla is the default locale**, and neither Latin family has Bengali glyphs —
-without a Bengali family the browser silently falls back to whatever it has,
-usually mismatched in weight and metrics. Noto Sans Bengali is therefore appended
-to both the display and body stacks, so Latin runs render in the brand face and
-Bengali runs render in Noto within the same line.
+**Wordmark:** `font-body font-bold uppercase tracking-[0.2em]`, `NEX` in
+`foreground` + `VIVE` in `accent`.
+
+**Bangla is the default locale**, so its face is first-class, not a fallback. DM
+Sans carries no Bengali glyphs, so Hind Siliguri sits next in the same stack — a
+Latin run renders in DM Sans, a Bengali run in Hind Siliguri, within one line.
 
 ### Type Scale
 
 | Level    | Size  | Weight | Font             | Usage                         |
 |----------|-------|--------|------------------|-------------------------------|
-| Display  | 48–72px| 700   | Cormorant   | Landing hero only             |
-| Hero     | 36px  | 700    | Cormorant   | Section-leading headlines     |
-| H1       | 28px  | 600    | Cormorant   | Page titles                   |
-| H2       | 20px  | 600    | Cormorant   | Section titles, card headings |
-| H3       | 16px  | 600    | Montserrat  | Sub-headings                  |
-| Body     | 16px  | 400    | Montserrat  | Descriptions, paragraphs      |
-| Caption  | 14px  | 400    | Montserrat  | Table cells, helper text      |
-| Micro    | 12px  | 500    | Montserrat  | Badges, eyebrow labels (`tracking-[0.15em]` uppercase) |
+| Display  | 48–72px| 700   | DM Sans | Landing hero — `tracking-tight`         |
+| Hero     | 36px  | 700    | DM Sans | Section-leading headlines               |
+| H1       | 28px  | 600    | DM Sans | Page titles                             |
+| H2       | 20px  | 600    | DM Sans | Section titles, card headings           |
+| H3       | 16px  | 600    | DM Sans | Sub-headings                            |
+| Body     | 16px  | 400    | DM Sans | Descriptions, paragraphs                |
+| Caption  | 14px  | 400    | DM Sans | Table cells, helper text                |
+| Micro    | 12px  | 500    | DM Sans | Badges, eyebrow labels (`tracking-[0.15em]` uppercase) |
 
 ### Rules
 
@@ -237,7 +239,12 @@ The pattern for an e-commerce home page. Section order, top to bottom:
    inline. Visual on the right at `lg`, stacked below at mobile.
 2. **Trust strip** — 4 concrete promises (COD, delivery window, authenticity,
    support). Icons plus text, never icons alone.
-3. **Categories** — browse by sport. Block tiles, image plus overlay.
+3. **Categories** — browse by sport. **Alternating solid-fill bento** (ink /
+   cream / gold / ink), not photo tiles: big serif name, index number, gold
+   rule, `ArrowUpRight`. Chosen because the catalog has no distinct category
+   imagery — solid brand blocks read as intentional and never empty, where a
+   repeated/absent photo reads as broken. Each tone ships its own contrast-safe
+   text/arrow/line subclasses (`CATEGORY_TONES`).
 4. **Featured products** — the commercial payload. 2 columns mobile, 4 desktop.
 5. **Promo block** — coupon or offer, high-contrast slab.
 6. **Social proof** — approved reviews with ratings. Placed *before* the final
@@ -406,9 +413,22 @@ Rules:
   content is fully visible when motion is off — never animate from `opacity: 0`
   without a matching end state of `opacity: 1`.
 
-Utilities in `globals.css`: `.reveal` (fade + rise on scroll-in via
-`animation-timeline`, degrading to an immediate on-load reveal where
-unsupported) and `.reveal-delay-{1..4}` for stagger.
+Two reveal mechanisms, chosen by fold position:
+
+- **`.reveal` (CSS, `globals.css`)** — fade + rise **once on load**, `.reveal-delay-{1..6}`
+  for stagger. Runs without JS and always animates *to* visible, so it is safe
+  above the fold (**hero uses this**) — no blank first paint, no JS dependency.
+- **`<Reveal>` (Motion, `components/ui/reveal.tsx`)** — scroll-triggered fade+rise
+  (`whileInView`, `once`), for **below-the-fold** blocks (category tiles, product
+  cards, review cards, closing). Honours `prefers-reduced-motion` (renders static).
+  Motion emits `opacity:0` in SSR, so each element carries `data-reveal` and a
+  `<noscript>` rule in the root layout forces `[data-reveal]` visible — every
+  section stays readable with JS disabled.
+
+**Haikei backdrop** (`components/ui/mesh-backdrop.tsx`): flat, organic gold blobs
+that drift via transform-only CSS (`drift-a` / `drift-b`, 16–20s) — no filters, no
+images, collapsed by the global reduced-motion rule. Used on the dark hero and
+closing slabs in place of static circles.
 
 ## Accessibility
 

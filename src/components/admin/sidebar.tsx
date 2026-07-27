@@ -77,7 +77,11 @@ export function Sidebar() {
     <>
       {/* Mobile top bar */}
       <div className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-card px-4 lg:hidden">
-        <button onClick={() => setOpen(true)} aria-label="Open menu">
+        <button
+          onClick={() => setOpen(true)}
+          aria-label="Open menu"
+          className="-ml-2 flex size-11 items-center justify-center rounded-button hover:bg-muted"
+        >
           <Menu className="size-6 text-foreground" />
         </button>
         <BrandLogo size={32} href={null} />
@@ -99,7 +103,7 @@ export function Sidebar() {
             <button
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="absolute right-3 top-4 text-text-muted"
+              className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-button text-text-muted hover:bg-muted"
             >
               <X className="size-5" />
             </button>

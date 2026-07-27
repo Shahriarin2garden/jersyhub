@@ -78,7 +78,9 @@ export default async function CustomersPage({ searchParams }: { searchParams: SP
             <tbody>
               {rows.map((c) => (
                 <TR key={c.id}>
-                  <TD className="font-medium text-foreground">{c.name}</TD>
+                  <TD className="max-w-36 truncate font-medium text-foreground sm:max-w-none">
+                    {c.name}
+                  </TD>
                   <TD className="tabular">{c.phone}</TD>
                   <TD className="hidden md:table-cell text-text-muted">
                     {c.email ?? "—"}

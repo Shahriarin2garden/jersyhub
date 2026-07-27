@@ -59,7 +59,7 @@ export function StarInput({
           onMouseEnter={() => setHover(i)}
           onMouseLeave={() => setHover(0)}
           onClick={() => onChange(i)}
-          className="p-0.5"
+          className="flex size-11 items-center justify-center rounded-button transition-transform active:scale-95"
         >
           <Star
             className={cn(

@@ -29,15 +29,15 @@ export default async function AccountOverview() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-foreground">
-          Hi {customer?.name} 👋
+          Hi {customer?.name}
         </h1>
         <p className="text-text-muted">{customer?.phone}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <Link href="/account/orders">
-          <Card className="flex items-center gap-3 hover:border-primary">
-            <Package className="size-6 text-primary" />
+          <Card className="flex items-center gap-3 hover:border-ink">
+            <Package className="size-6 text-ink" />
             <div>
               <p className="tabular text-xl font-bold text-foreground">{orderCount}</p>
               <p className="text-sm text-text-muted">Orders</p>
@@ -45,8 +45,8 @@ export default async function AccountOverview() {
           </Card>
         </Link>
         <Link href="/account/wishlist">
-          <Card className="flex items-center gap-3 hover:border-primary">
-            <Heart className="size-6 text-primary" />
+          <Card className="flex items-center gap-3 hover:border-ink">
+            <Heart className="size-6 text-ink" />
             <div>
               <p className="tabular text-xl font-bold text-foreground">{wishlistCount}</p>
               <p className="text-sm text-text-muted">Wishlist</p>
@@ -65,7 +65,7 @@ export default async function AccountOverview() {
               <Link
                 key={o.id}
                 href={`/order/${o.orderNumber}`}
-                className="flex items-center justify-between gap-2 rounded-card border border-border bg-card p-3 hover:border-primary"
+                className="flex items-center justify-between gap-2 rounded-card border border-border bg-card p-3 hover:border-ink"
               >
                 <span className="tabular font-medium text-foreground">
                   {o.orderNumber}

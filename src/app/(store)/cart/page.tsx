@@ -62,10 +62,11 @@ export default function CartPage() {
               <div className="flex flex-1 flex-col gap-1">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-semibold text-foreground">{item.name}</h3>
+                  {/* -m-2 keeps the 44px hit area from pushing the title around. */}
                   <button
                     onClick={() => removeItem(item.variantId)}
                     aria-label="Remove item"
-                    className="text-text-muted hover:text-destructive"
+                    className="-m-2 flex size-11 shrink-0 items-center justify-center rounded-button text-text-muted hover:text-destructive"
                   >
                     <Trash2 className="size-4" />
                   </button>
@@ -113,7 +114,7 @@ export default function CartPage() {
             )}
             <div className="flex justify-between border-t border-border pt-3 text-base font-bold">
               <dt className="text-foreground">Total</dt>
-              <dd className="tabular text-primary">{formatPrice(total)}</dd>
+              <dd className="tabular text-ink">{formatPrice(total)}</dd>
             </div>
           </dl>
           <Link href="/checkout" className="mt-5 block">
@@ -123,7 +124,7 @@ export default function CartPage() {
           </Link>
           <Link
             href="/shop"
-            className="mt-3 block text-center text-sm text-primary hover:underline"
+            className="mt-3 block text-center text-sm text-ink hover:underline"
           >
             Continue shopping
           </Link>

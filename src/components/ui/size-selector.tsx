@@ -32,7 +32,7 @@ export function SizeSelector({
               "flex min-h-11 min-w-12 items-center justify-center rounded-button border px-3 text-sm font-medium transition-all active:scale-[0.97]",
               active
                 ? "border-primary bg-primary text-white"
-                : "border-border bg-card text-foreground hover:border-primary",
+                : "border-border bg-card text-foreground hover:border-ink",
               disabled &&
                 "cursor-not-allowed border-border bg-muted text-text-muted line-through hover:border-border",
             )}

@@ -117,7 +117,7 @@ export default function AccountLoginPage() {
             <button
               type="button"
               onClick={() => setStep("phone")}
-              className="w-full text-center text-sm text-primary hover:underline"
+              className="w-full text-center text-sm text-ink hover:underline"
             >
               Change number
             </button>

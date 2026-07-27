@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { sendSms } from "@/lib/sms";
+import { sendSms, smsConfigured } from "@/lib/sms";
 
 const OTP_TTL_MIN = 5;
 const MAX_ATTEMPTS = 5;
@@ -27,10 +27,20 @@ export async function requestOtp(phone: string): Promise<{ ok: boolean; error?: 
     data: { phone, codeHash, expiresAt: new Date(Date.now() + OTP_TTL_MIN * 60 * 1000) },
   });
 
-  await sendSms(phone, `Your NexVive verification code is ${code}. Valid for ${OTP_TTL_MIN} minutes.`);
+  const delivered = await sendSms(
+    phone,
+    `Your NexVive verification code is ${code}. Valid for ${OTP_TTL_MIN} minutes.`,
+  );
 
-  // In dev (no SMS gateway) expose the code so login is testable.
-  const devCode = process.env.SMS_API_KEY ? undefined : code;
+  // A configured provider that fails to deliver must not silently "succeed" —
+  // drop the record so the user can retry immediately (not blocked by cooldown).
+  if (smsConfigured() && !delivered) {
+    await prisma.otp.deleteMany({ where: { phone } });
+    return { ok: false, error: "Could not send the code. Please try again." };
+  }
+
+  // In dev (no SMS provider configured) expose the code so login is testable.
+  const devCode = smsConfigured() ? undefined : code;
   return { ok: true, devCode };
 }
 

@@ -84,13 +84,13 @@ export default async function ProductPage({
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Breadcrumb */}
       <nav className="mb-6 flex flex-wrap items-center gap-1 text-sm text-text-muted">
-        <Link href="/" className="hover:text-primary">Home</Link>
+        <Link href="/" className="hover:text-ink">Home</Link>
         <ChevronRight className="size-3.5" />
-        <Link href="/shop" className="hover:text-primary">Shop</Link>
+        <Link href="/shop" className="hover:text-ink">Shop</Link>
         <ChevronRight className="size-3.5" />
         <Link
           href={`/shop?category=${product.category.slug}`}
-          className="hover:text-primary"
+          className="hover:text-ink"
         >
           {product.category.name}
         </Link>
@@ -103,7 +103,7 @@ export default async function ProductPage({
 
         <div className="space-y-5">
           <div className="space-y-2">
-            <Badge className="bg-primary-light text-primary">
+            <Badge className="bg-primary-light text-ink">
               {localized(product.category, "name", "nameBn", locale)}
             </Badge>
             <h1 className="text-3xl font-semibold text-foreground">
@@ -113,7 +113,7 @@ export default async function ProductPage({
               <StarRating value={avgRating} count={reviewCount} />
             )}
             <div className="flex items-baseline gap-2">
-              <p className="tabular text-2xl font-bold text-primary">
+              <p className="tabular text-2xl font-bold text-ink">
                 {formatPrice(product.price)}
               </p>
               {product.compareAtPrice != null &&
@@ -140,15 +140,15 @@ export default async function ProductPage({
           />
 
           <div className="grid grid-cols-3 gap-2 border-t border-border pt-5 text-center text-xs">
-            <div className="rounded-button bg-muted p-2">
+            <div className="min-w-0 rounded-button bg-muted p-2">
               <p className="font-semibold text-foreground">Cash on delivery</p>
               <p className="text-text-muted">Pay when you receive</p>
             </div>
-            <div className="rounded-button bg-muted p-2">
+            <div className="min-w-0 rounded-button bg-muted p-2">
               <p className="font-semibold text-foreground">2–4 days</p>
               <p className="text-text-muted">Nationwide delivery</p>
             </div>
-            <div className="rounded-button bg-muted p-2">
+            <div className="min-w-0 rounded-button bg-muted p-2">
               <p className="font-semibold text-foreground">Authentic</p>
               <p className="text-text-muted">Quality checked</p>
             </div>

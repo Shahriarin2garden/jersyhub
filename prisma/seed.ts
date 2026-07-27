@@ -58,16 +58,18 @@ function orderNumber(): string {
 async function main() {
   console.log("Seeding…");
 
-  // Admin
-  const email = process.env.ADMIN_EMAIL ?? "admin@jersyhub.com";
-  const password = process.env.ADMIN_PASSWORD ?? "changeme123";
+  // Admin — exactly ONE, permanent. Upsert the configured account and remove
+  // any other admin row so a single fixed login is guaranteed.
+  const email = process.env.ADMIN_EMAIL ?? "admin@nexvive.com";
+  const password = process.env.ADMIN_PASSWORD ?? "NexVive@Admin#2026";
   const passwordHash = await bcrypt.hash(password, 10);
   await prisma.admin.upsert({
     where: { email },
-    update: { passwordHash, name: "Store Admin" },
-    create: { email, passwordHash, name: "Store Admin" },
+    update: { passwordHash, name: "NexVive Admin" },
+    create: { email, passwordHash, name: "NexVive Admin" },
   });
-  console.log(`Admin: ${email}`);
+  await prisma.admin.deleteMany({ where: { NOT: { email } } });
+  console.log(`Admin (single): ${email}`);
 
   // Categories
   const catMap = new Map<string, string>();

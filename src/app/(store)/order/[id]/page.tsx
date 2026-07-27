@@ -38,7 +38,7 @@ export default async function OrderPage({
       <Card className="space-y-6">
         <div className="text-center">
           <p className="text-sm text-text-muted">Order number</p>
-          <p className="tabular font-display text-3xl font-bold text-primary">
+          <p className="tabular font-display text-3xl font-bold text-ink">
             {order.orderNumber}
           </p>
           <div className="mt-2">
@@ -83,7 +83,7 @@ export default async function OrderPage({
             </div>
             <div className="flex justify-between text-base font-bold">
               <dt className="text-foreground">Total</dt>
-              <dd className="tabular text-primary">{formatPrice(order.total)}</dd>
+              <dd className="tabular text-ink">{formatPrice(order.total)}</dd>
             </div>
           </dl>
         </div>
@@ -103,7 +103,7 @@ export default async function OrderPage({
           href={whatsappLink(`Hi, I'm tracking order ${order.orderNumber}.`)}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 rounded-button bg-accent px-4 py-3 font-medium text-primary-dark hover:bg-accent-dark"
+          className="flex items-center justify-center gap-2 rounded-button bg-accent px-4 py-3 font-medium text-ink-dark hover:bg-accent-dark"
         >
           <MessageCircle className="size-5" />
           Questions? Contact us on WhatsApp

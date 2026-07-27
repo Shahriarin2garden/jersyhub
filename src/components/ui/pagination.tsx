@@ -32,7 +32,7 @@ export function Pagination({
         href={href(prev)}
         aria-disabled={page <= 1}
         className={cn(
-          "flex size-9 items-center justify-center rounded-button border border-border bg-card text-foreground hover:bg-muted",
+          "flex size-11 items-center justify-center rounded-button border border-border bg-card text-foreground hover:bg-muted",
           page <= 1 && "pointer-events-none opacity-40",
         )}
       >
@@ -45,7 +45,7 @@ export function Pagination({
         href={href(next)}
         aria-disabled={page >= totalPages}
         className={cn(
-          "flex size-9 items-center justify-center rounded-button border border-border bg-card text-foreground hover:bg-muted",
+          "flex size-11 items-center justify-center rounded-button border border-border bg-card text-foreground hover:bg-muted",
           page >= totalPages && "pointer-events-none opacity-40",
         )}
       >

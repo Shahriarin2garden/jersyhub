@@ -31,7 +31,7 @@ export default async function EditProductPage({
     <div className="space-y-6">
       <Link
         href="/admin/products"
-        className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+        className="inline-flex items-center gap-1 text-sm text-ink hover:underline"
       >
         <ArrowLeft className="size-4" /> Back to products
       </Link>

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ok, fail, fromZod } from "@/lib/api";
 import { requireAdmin } from "@/lib/guard";
 import { productSchema } from "@/lib/validations";
+import { revalidateCatalogue } from "@/lib/cached";
 
 const updateSchema = productSchema.partial();
 
@@ -89,6 +90,7 @@ export async function PATCH(
     where: { id },
     include: { variants: true, category: true },
   });
+  revalidateCatalogue();
   return ok(updated);
 }
 
@@ -110,5 +112,6 @@ export async function DELETE(
   }
 
   await prisma.product.delete({ where: { id } });
+  revalidateCatalogue();
   return ok({ id });
 }

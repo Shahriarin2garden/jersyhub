@@ -73,7 +73,7 @@ export function ImageUpload({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="flex aspect-4/5 w-24 flex-col items-center justify-center gap-1 rounded-button border border-dashed border-border text-text-muted hover:border-primary hover:text-primary"
+            className="flex aspect-4/5 w-24 flex-col items-center justify-center gap-1 rounded-button border border-dashed border-border text-text-muted hover:border-ink hover:text-ink"
           >
             {uploading ? (
               <Loader2 className="size-5 animate-spin" />

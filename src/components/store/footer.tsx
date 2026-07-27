@@ -24,22 +24,27 @@ export function Footer() {
             href={whatsappLink("Hi NexVive, I have a question.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 transition-colors hover:text-white"
+            className="flex min-h-11 items-center gap-2 transition-colors hover:text-white"
           >
             <MessageCircle className="size-4 text-accent" /> WhatsApp us
           </a>
         </div>
-        <div className="space-y-2.5 text-sm text-white/75">
-          <Link href="/shop" className="block transition-colors hover:text-white">
+        {/* Footer links sit close together, so each needs a full-height row to
+            be tappable without hitting its neighbour. */}
+        <div className="text-sm text-white/75">
+          <Link href="/shop" className="flex min-h-11 items-center transition-colors hover:text-white">
             Shop all
           </Link>
-          <Link href="/cart" className="block transition-colors hover:text-white">
+          <Link href="/cart" className="flex min-h-11 items-center transition-colors hover:text-white">
             Your cart
           </Link>
-          <Link href="/account" className="block transition-colors hover:text-white">
+          <Link href="/account" className="flex min-h-11 items-center transition-colors hover:text-white">
             My account
           </Link>
-          <Link href="/admin" className="block text-white/40 transition-colors hover:text-white">
+          <Link
+            href="/admin"
+            className="flex min-h-11 items-center text-white/40 transition-colors hover:text-white"
+          >
             Admin
           </Link>
         </div>

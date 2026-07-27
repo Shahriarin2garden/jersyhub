@@ -17,8 +17,11 @@ export function THead({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Cells default to nowrap: on a phone the table scrolls sideways inside its own
+// container, and letting cells wrap instead just produces tall ragged rows.
+// Pass `whitespace-normal` on the one content-heavy column that should wrap.
 export function TH({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th className={cn("px-4 py-3 font-medium", className)} {...props} />;
+  return <th className={cn("whitespace-nowrap px-3 py-3 font-medium sm:px-4", className)} {...props} />;
 }
 
 export function TR({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
@@ -28,5 +31,10 @@ export function TR({ className, ...props }: React.HTMLAttributes<HTMLTableRowEle
 }
 
 export function TD({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
-  return <td className={cn("px-4 py-3 text-text-secondary", className)} {...props} />;
+  return (
+    <td
+      className={cn("whitespace-nowrap px-3 py-3 text-text-secondary sm:px-4", className)}
+      {...props}
+    />
+  );
 }

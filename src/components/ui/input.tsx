@@ -28,7 +28,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             "h-11 w-full rounded-button border bg-card px-3 text-base text-foreground",
             "placeholder:text-text-muted",
-            "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:ring-offset-background",
+            "focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-1 focus:ring-offset-background",
             error ? "border-destructive" : "border-border",
             className,
           )}

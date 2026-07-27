@@ -44,9 +44,13 @@ export function ShopFilters({ categories }: { categories: Cat[] }) {
         <legend className="mb-2 text-sm font-semibold uppercase text-foreground">
           Category
         </legend>
-        <div className="space-y-1.5">
+        <div className="space-y-0.5">
           {categories.map((c) => (
-            <label key={c.slug} className="flex items-center gap-2 text-sm text-text-secondary">
+            // min-h-11 gives the whole row a thumb-sized hit area, not just the box.
+            <label
+              key={c.slug}
+              className="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm text-text-secondary"
+            >
               <input
                 type="checkbox"
                 checked={activeCats.has(c.slug)}
@@ -72,7 +76,7 @@ export function ShopFilters({ categories }: { categories: Cat[] }) {
                 onChange={() => toggle("size", activeSizes, s)}
                 className="peer sr-only"
               />
-              <span className="inline-flex min-w-10 justify-center rounded-button border border-border px-2 py-1.5 text-sm text-foreground peer-checked:border-primary peer-checked:bg-primary peer-checked:text-white">
+              <span className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-button border border-border px-3 text-sm text-foreground peer-checked:border-primary peer-checked:bg-primary peer-checked:text-white">
                 {s}
               </span>
             </label>
@@ -128,7 +132,11 @@ export function ShopFilters({ categories }: { categories: Cat[] }) {
           <div className="absolute inset-y-0 left-0 w-80 max-w-[85%] overflow-y-auto bg-card p-5">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-foreground">Filters</h2>
-              <button onClick={() => setOpen(false)} aria-label="Close">
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Close"
+                className="-mr-2 flex size-11 items-center justify-center rounded-button hover:bg-muted"
+              >
                 <X className="size-5 text-text-muted" />
               </button>
             </div>

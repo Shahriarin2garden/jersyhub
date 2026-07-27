@@ -12,7 +12,8 @@ Local business jersey marketplace. Customer storefront + admin dashboard.
 - **Auth**: NextAuth.js v5 (credentials provider, admin only)
 - **Images**: Cloudinary (free tier, 25 credits/month)
 - **Icons**: Lucide React (never use emoji as icons)
-- **Hosting**: Render (free tier, commercial use OK)
+- **Hosting**: Netlify (Starter/free — commercial use permitted). Not Vercel: its
+  Hobby plan forbids commercial use, and this is a real shop. See `docs/DEPLOYMENT.md`.
 
 ## Key Constraints
 

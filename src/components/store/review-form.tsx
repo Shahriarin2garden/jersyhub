@@ -26,7 +26,7 @@ export function ReviewForm({
   if (!loggedIn) {
     return (
       <p className="text-sm text-text-muted">
-        <Link href="/account/login" className="text-primary hover:underline">
+        <Link href="/account/login" className="text-ink hover:underline">
           {t("nav.login")}
         </Link>{" "}
         to write a review.

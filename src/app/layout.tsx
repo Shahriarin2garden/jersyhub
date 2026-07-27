@@ -1,28 +1,22 @@
 import type { Metadata } from "next";
-import { Montserrat, Cormorant, Noto_Sans_Bengali } from "next/font/google";
+import { DM_Sans, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 import { getLocale } from "@/i18n/server";
 
-// Body — geometric sans, echoes the wide NexVive wordmark.
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
+// One minimal, premium sans across the whole UI — headings, body, wordmark.
+// Hierarchy comes from weight and tracking, not from mixing families. DM Sans
+// stays crisp at every size (the thin serif read poorly at hero and card sizes).
+const dmSans = DM_Sans({
+  variable: "--font-dmsans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-// Display — elegant high-contrast serif, the luxury-fashion voice.
-const cormorant = Cormorant({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
-
-// Bangla is the default locale; Barlow has no Bengali glyphs, so without this
-// the browser falls back to whatever it has and the metrics stop matching.
-const notoBengali = Noto_Sans_Bengali({
-  variable: "--font-noto-bengali",
+// Bangla is the DEFAULT locale, so its face is first-class, not a fallback.
+// Hind Siliguri is the Bengali sans counterpart to DM Sans — modern, minimal.
+const hindSiliguri = Hind_Siliguri({
+  variable: "--font-hind",
   subsets: ["bengali"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
@@ -46,7 +40,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${montserrat.variable} ${cormorant.variable} ${notoBengali.variable} h-full`}
+      className={`${dmSans.variable} ${hindSiliguri.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

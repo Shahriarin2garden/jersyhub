@@ -42,7 +42,7 @@ export function OrderFilters() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search order # or customer…"
-          className="h-11 w-full rounded-button border border-border bg-card pl-9 pr-3 text-base text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          className="h-11 w-full rounded-button border border-border bg-card pl-9 pr-3 text-base text-foreground focus:outline-none focus:ring-2 focus:ring-ink"
         />
       </form>
 

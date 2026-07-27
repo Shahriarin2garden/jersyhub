@@ -4,6 +4,7 @@ import { Footer } from "@/components/store/footer";
 import { getLocale } from "@/i18n/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getNavCategories } from "@/lib/cached";
 
 export default async function StoreLayout({
   children,
@@ -14,10 +15,7 @@ export default async function StoreLayout({
   const isCustomer = session?.user?.role === "customer";
 
   const [categories, wishlist] = await Promise.all([
-    prisma.category.findMany({
-      orderBy: { displayOrder: "asc" },
-      select: { slug: true, name: true, nameBn: true },
-    }),
+    getNavCategories(),
     isCustomer
       ? prisma.wishlistItem.findMany({
           where: { customerId: session!.user.id },

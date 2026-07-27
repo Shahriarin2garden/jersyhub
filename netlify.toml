@@ -4,9 +4,11 @@
 # schema change applies it first. It is non-interactive and a no-op when there
 # is nothing pending, so it is safe on every deploy.
 #
-# Note this uses DATABASE_URL. Neon's pooled connection works for migrations in
-# most cases, but if a migration fails with an advisory-lock error, set a
-# separate DIRECT_URL to the non-pooled host and use it here instead.
+# Migrations use DIRECT_URL, declared as `directUrl` in prisma/schema.prisma.
+# PgBouncer runs in transaction pooling mode and cannot hold the advisory lock
+# a migration takes, so running this against the pooled host fails the build.
+# Both DATABASE_URL (pooled, for runtime) and DIRECT_URL (non-pooled, for
+# migrations) must be set in the site's environment.
 
 [build]
   command = "npx prisma migrate deploy && npm run build"

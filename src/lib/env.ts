@@ -22,6 +22,10 @@
 
 const REQUIRED = [
   ["DATABASE_URL", "Postgres connection string (use Neon's pooled -pooler host)"],
+  [
+    "DIRECT_URL",
+    "Neon's non-pooled host — migrations cannot run through PgBouncer",
+  ],
   ["NEXTAUTH_SECRET", "generate with: openssl rand -base64 32"],
   ["NEXTAUTH_URL", "the site's public origin, e.g. https://nexvive.com"],
 ] as const;

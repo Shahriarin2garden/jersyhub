@@ -4,7 +4,22 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+
+  // Runtime queries go through Neon's pooled (PgBouncer) endpoint. Serverless
+  // functions open a connection per invocation, and a direct Postgres endpoint
+  // runs out of connections long before our traffic would justify it.
+  url = env("DATABASE_URL")
+
+  // Migrations go direct. PgBouncer runs in transaction pooling mode, which
+  // does not carry the session state a migration needs — `migrate deploy`
+  // fails against a pooled endpoint with an advisory-lock error. Netlify runs
+  // `migrate deploy` on every build, so this is the difference between a
+  // deploy that ships a schema change and one that dies at the build step.
+  //
+  // Required once declared — Prisma will not fall back to DATABASE_URL. In
+  // local development, where the connection is already direct, set it to the
+  // same value.
+  directUrl = env("DIRECT_URL")
 }
 
 enum ProductStatus {
